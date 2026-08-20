@@ -35,6 +35,11 @@ addopts = "-m 'not live'"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# Django migrations are generated code
+extend-exclude = ["**/migrations"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "DJ"]
+# DJ001 (no null=True on char fields) conflicts with the spec's "NULL means unknown"
+# convention for imported values that must stay distinct from empty strings.
+ignore = ["DJ001"]

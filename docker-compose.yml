@@ -1,4 +1,23 @@
 services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      # Inside the compose network the stores live on service hostnames,
+      # overriding the localhost values a host-side .env may carry.
+      DATABASE_URL: postgres://goodlane:goodlane@db:5432/carrier_agent
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   db:
     image: postgres:16-alpine
     environment:

@@ -24,6 +24,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_htmx",
+    "apps.freight",
+    "apps.comms",
+    "apps.aiops",
+    "apps.inquiries",
+    "apps.candidates",
+    "apps.workspace",
 ]
 
 MIDDLEWARE = [
