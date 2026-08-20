@@ -1,0 +1,26 @@
+# Secrets — never commit environment files (real API keys live in .env)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Django
+staticfiles/
+var/
+db.sqlite3
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
