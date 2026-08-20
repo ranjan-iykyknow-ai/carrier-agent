@@ -95,9 +95,11 @@
         </thead>
         <tbody>
           {% for row in candidates %}
-          <tr class="cursor-pointer hover:bg-slate-50" onclick="window.location='{% url 'carrier_profile' row.carrier.pk %}'">
+          <tr class="cursor-pointer hover:bg-slate-50"
+              title="{% if row.review_inquiry %}Open the latest inquiry from this carrier{% else %}Open the carrier profile{% endif %}"
+              onclick="window.location='{% if row.review_inquiry %}{% url 'inquiry_review' row.review_inquiry.pk %}{% else %}{% url 'carrier_profile' row.carrier.pk %}{% endif %}'">
             <td class="td">
-              <a href="{% url 'carrier_profile' row.carrier.pk %}" class="font-semibold text-slate-900 hover:text-brand-600">{{ row.carrier.company_name|default:"(unnamed carrier)" }}</a>
+              <a href="{% url 'carrier_profile' row.carrier.pk %}" onclick="event.stopPropagation()" title="Open the carrier profile" class="font-semibold text-slate-900 hover:text-brand-600">{{ row.carrier.company_name|default:"(unnamed carrier)" }}</a>
               <div class="font-mono text-xs text-slate-400">{% if row.carrier.mc_number_raw %}MC {{ row.carrier.mc_number_raw }}{% else %}no MC on file{% endif %}
                 {% if row.carrier.reliability_score is not None %}· ★ {{ row.carrier.reliability_score }}{% endif %}</div>
             </td>
