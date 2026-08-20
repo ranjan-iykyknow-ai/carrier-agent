@@ -28,13 +28,13 @@
     <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-slate-500">
       {% if inquiry.carrier %}
       <span>Carrier <a class="font-semibold text-brand-600 hover:underline" href="{% url 'carrier_profile' inquiry.carrier.pk %}">{{ inquiry.carrier.company_name|default:"(unnamed)" }}</a>
-        <span class="chip {% if inquiry.carrier_resolution_status == 'verified' %}chip-ok{% else %}chip-warn{% endif %} ml-1">{{ inquiry.carrier_resolution_status }}</span></span>
+        <span class="chip {% if inquiry.carrier_resolution_status == 'verified' %}chip-ok{% else %}chip-warn{% endif %} ml-1" title="{% if inquiry.carrier_resolution_status == 'verified' %}Deterministically verified against the carrier directory{% else %}A human must confirm this identity{% endif %}">{{ inquiry.carrier_resolution_status }}</span></span>
       {% else %}
       <span>Carrier <b class="text-amber-600">{{ inquiry.carrier_resolution_status }}</b></span>
       {% endif %}
       {% if inquiry.load %}
       <span>Load <a class="font-mono font-semibold text-brand-600 hover:underline" href="{% url 'load_workspace' inquiry.load.external_load_id %}">{{ inquiry.load.external_load_id }}</a>
-        <span class="chip {% if inquiry.load_resolution_status == 'verified' %}chip-ok{% else %}chip-warn{% endif %} ml-1">{{ inquiry.load_resolution_status }}</span></span>
+        <span class="chip {% if inquiry.load_resolution_status == 'verified' %}chip-ok{% else %}chip-warn{% endif %} ml-1" title="{% if inquiry.load_resolution_status == 'verified' %}The stated reference matched exactly one load{% else %}A human must confirm the load reference{% endif %}">{{ inquiry.load_resolution_status }}</span></span>
       {% else %}
       <span>Load <b class="text-amber-600">{{ inquiry.load_resolution_status }}</b></span>
       {% endif %}
@@ -53,7 +53,7 @@
   <div class="grid items-start gap-4 xl:grid-cols-[1fr_400px]">
 
     <!-- Source evidence -->
-    <div class="grid gap-4">
+    <div class="min-w-0 grid gap-4">
       {% if email %}
       <div class="card">
         <div class="card-title">Original email</div>
@@ -62,7 +62,7 @@
           {% if email.recipient_raw %} · To <span class="font-mono text-slate-700">{{ email.recipient_raw }}</span>{% endif %}
         </div>
         <div class="mb-3 font-display font-bold">{% for piece in subject_pieces %}{% if piece.hit %}<mark class="rounded bg-brand-100 px-0.5 text-brand-900">{{ piece.text }}</mark>{% else %}{{ piece.text }}{% endif %}{% endfor %}</div>
-        <div class="whitespace-pre-wrap rounded-lg border border-slate-100 bg-slate-50 p-3 font-mono text-[13px] leading-relaxed">{% for piece in body_pieces %}{% if piece.hit %}<mark class="rounded bg-brand-100 px-0.5 text-brand-900" title="Cited as evidence">{{ piece.text }}</mark>{% else %}{{ piece.text }}{% endif %}{% endfor %}</div>
+        <div class="whitespace-pre-wrap break-words rounded-lg border border-slate-100 bg-slate-50 p-3 font-mono text-[13px] leading-relaxed">{% for piece in body_pieces %}{% if piece.hit %}<mark class="rounded bg-brand-100 px-0.5 text-brand-900" title="Cited as evidence">{{ piece.text }}</mark>{% else %}{{ piece.text }}{% endif %}{% endfor %}</div>
         <div class="mt-2 text-[11px] text-slate-400"><mark class="rounded bg-brand-100 px-1">highlighted</mark> text is grounded evidence cited by the extraction</div>
       </div>
       {% if email.source_metadata %}
@@ -96,8 +96,8 @@
           <span class="font-mono text-[11px] text-slate-400">{{ row.segment.start_seconds|floatformat:0 }}s{% if row.segment.speaker_role %} · {{ row.segment.speaker_role }}{% endif %}</span>
           <span class="{% if row.uncertain %}text-amber-700{% endif %}">
             {{ row.segment.text }}
-            {% if row.uncertain %}<span class="chip chip-warn ml-1">uncertain</span>{% endif %}
-            {% if row.cited %}<span class="chip chip-brand ml-1">cited</span>{% endif %}
+            {% if row.uncertain %}<span class="chip chip-warn ml-1" title="Transcription confidence for this segment is below the threshold — verify by listening">uncertain</span>{% endif %}
+            {% if row.cited %}<span class="chip chip-brand ml-1" title="This segment is cited as evidence by the extraction">cited</span>{% endif %}
           </span>
         </div>
         {% empty %}
@@ -109,7 +109,7 @@
     </div>
 
     <!-- Extraction, warnings, actions -->
-    <div class="grid gap-4">
+    <div class="min-w-0 grid gap-4">
 
       {% if pending_reasons or warning_reasons %}
       <div class="card border-amber-200">
@@ -136,10 +136,10 @@
         <div class="border-b border-slate-100 py-1.5 last:border-0">
           <div class="flex items-center gap-2">
             <span class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">{{ row.label }}</span>
-            {% if row.assessment.evidence_status == "explicit" %}<span class="chip chip-ok">explicit</span>
-            {% elif row.assessment.evidence_status == "inferred" %}<span class="chip chip-info">inferred</span>
-            {% elif row.assessment.evidence_status == "conflicting" %}<span class="chip chip-danger">conflicting</span>
-            {% else %}<span class="chip chip-muted">missing</span>{% endif %}
+            {% if row.assessment.evidence_status == "explicit" %}<span class="chip chip-ok" title="Stated in the source — the cited excerpt was verified at its exact location">explicit</span>
+            {% elif row.assessment.evidence_status == "inferred" %}<span class="chip chip-info" title="Proposed by the model, but no exact excerpt could be verified in the source">inferred</span>
+            {% elif row.assessment.evidence_status == "conflicting" %}<span class="chip chip-danger" title="Evidence in this communication contradicts itself">conflicting</span>
+            {% else %}<span class="chip chip-muted" title="Not present in the source">missing</span>{% endif %}
           </div>
           <div class="text-[13px]">
             {% if row.assessment.value_snapshot is not None %}{{ row.assessment.value_snapshot }}{% else %}<span class="italic text-slate-400">not stated</span>{% endif %}
@@ -163,7 +163,7 @@
       <div class="card">
         <div class="card-title">Rates mentioned</div>
         {% for quote in quotes %}
-        <div class="flex items-center gap-2 border-b border-slate-100 py-1.5 last:border-0">
+        <div class="flex flex-wrap items-center gap-2 border-b border-slate-100 py-1.5 last:border-0">
           <span class="font-mono font-semibold">${{ quote.amount|floatformat:2 }}</span>
           <span class="chip chip-muted">{{ quote.get_quote_type_display|lower }}</span>
           <span class="text-xs text-slate-400">{{ quote.rate_basis|cut:"_" }}</span>
@@ -177,9 +177,9 @@
         <div class="card-title">Identity resolution</div>
         <div class="mb-1 font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Carrier candidates</div>
         {% for match in carrier_matches %}
-        <div class="flex items-center gap-2 py-1 text-[13px]">
+        <div class="flex flex-wrap items-center gap-2 py-1 text-[13px]">
           <a href="{% url 'carrier_profile' match.carrier.pk %}" class="{% if match.is_selected %}font-semibold{% endif %} text-slate-900 hover:text-brand-600 hover:underline">{{ match.carrier.company_name|default:"(unnamed carrier)" }}</a>
-          <span class="chip chip-muted">{{ match.match_tier }} · {{ match.primary_method|cut:"_" }}</span>
+          <span class="chip chip-muted" title="{% if match.match_tier == 'exact' %}An exact identifier matched: MC, DOT, email, or phone{% elif match.match_tier == 'weak' %}Name similarity only — it cannot verify identity by itself{% elif match.match_tier == 'conflicting' %}Exact identity signals point at different records{% else %}Multiple strong signals agree{% endif %}">{{ match.match_tier }} · {{ match.primary_method|cut:"_" }}</span>
           {% if match.is_selected %}<span class="chip chip-ok">selected · {{ match.selection_source }}</span>
           {% elif match.status == "rejected" %}<span class="chip chip-muted">rejected</span>{% endif %}
           {% if not match.is_selected and inquiry.review_status != "rejected" %}
@@ -196,11 +196,11 @@
         {% if inquiry.review_status != "rejected" %}
         <form method="get" class="mt-2 flex gap-2">
           <input type="search" name="carrier_q" value="{{ carrier_q }}" placeholder="Search carriers — name, MC, DOT, email…"
-                 class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+                 class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
           <button type="submit" class="btn">Search</button>
         </form>
         {% for carrier in carrier_results %}
-        <div class="flex items-center gap-2 border-b border-slate-100 py-1.5 text-[13px] last:border-0">
+        <div class="flex flex-wrap items-center gap-2 border-b border-slate-100 py-1.5 text-[13px] last:border-0">
           <span>{{ carrier.company_name|default:"(unnamed carrier)" }}</span>
           <span class="font-mono text-[11px] text-slate-400">{% if carrier.mc_number_raw %}MC {{ carrier.mc_number_raw }}{% else %}no MC{% endif %}</span>
           <form method="post" action="{% url 'inquiry_action' inquiry.pk 'correct-carrier' %}" class="ml-auto">{% csrf_token %}
@@ -215,10 +215,10 @@
 
         <div class="mb-1 mt-4 font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Load reference</div>
         {% for match in load_matches %}
-        <div class="flex items-center gap-2 py-1 text-[13px]">
-          <span class="font-mono {% if match.is_selected %}font-semibold{% endif %}">{{ match.load.external_load_id }}</span>
+        <div class="flex flex-wrap items-center gap-2 py-1 text-[13px]">
+          <a href="{% url 'load_workspace' match.load.external_load_id %}" class="font-mono {% if match.is_selected %}font-semibold{% endif %} text-brand-600 hover:underline">{{ match.load.external_load_id }}</a>
           <span class="text-xs text-slate-500">{{ match.load.origin_city }} → {{ match.load.destination_city }}</span>
-          <span class="chip chip-muted">{{ match.match_tier }} · {{ match.primary_method|cut:"_" }}</span>
+          <span class="chip chip-muted" title="{% if match.match_tier == 'exact' %}An exact identifier matched: MC, DOT, email, or phone{% elif match.match_tier == 'weak' %}Name similarity only — it cannot verify identity by itself{% elif match.match_tier == 'conflicting' %}Exact identity signals point at different records{% else %}Multiple strong signals agree{% endif %}">{{ match.match_tier }} · {{ match.primary_method|cut:"_" }}</span>
           {% if match.is_selected %}<span class="chip chip-ok">selected · {{ match.selection_source }}</span>{% endif %}
         </div>
         {% empty %}
@@ -227,7 +227,7 @@
         {% if inquiry.review_status != "rejected" %}
         <form method="post" action="{% url 'inquiry_action' inquiry.pk 'correct-load' %}" class="mt-2 flex gap-2">{% csrf_token %}
           <input type="text" name="external_load_id" placeholder="Correct load ID, e.g. 29372450"
-                 class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-mono text-sm">
+                 class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-mono text-sm">
           <button type="submit" class="btn">Set load</button>
         </form>
         {% endif %}

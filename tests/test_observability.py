@@ -312,7 +312,12 @@ class TestPublishPrompts:
         call_command("publish_prompts", stdout=out)
 
         names = {entry["name"] for entry in fake.created}
-        assert names == {"extraction-email", "extraction-call"}
+        assert names == {
+            "extraction-email",
+            "extraction-call",
+            "draft-response",
+            "assistant-turn",
+        }
         assert all(entry["labels"] == ["production"] for entry in fake.created)
         assert all(entry["type"] == "text" for entry in fake.created)
 
@@ -330,8 +335,15 @@ class TestPublishPrompts:
                 self.created = []
 
             def get_prompt(self, name, **kwargs):
-                channel = "email" if "email" in name else "call"
-                return SimpleNamespace(prompt=fallback_prompt(channel).text, version=3)
+                from apps.aiops.prompts import assistant_prompt, draft_prompt
+
+                texts = {
+                    "extraction-email": fallback_prompt("email").text,
+                    "extraction-call": fallback_prompt("call").text,
+                    "draft-response": draft_prompt().text,
+                    "assistant-turn": assistant_prompt().text,
+                }
+                return SimpleNamespace(prompt=texts[name], version=3)
 
             def create_prompt(self, **kwargs):
                 self.created.append(kwargs)

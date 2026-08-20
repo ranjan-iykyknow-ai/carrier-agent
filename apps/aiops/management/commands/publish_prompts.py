@@ -9,18 +9,23 @@ production text differs, so reruns are idempotent.
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.aiops import observability
-from apps.aiops.prompts import fallback_prompt
+from apps.aiops.prompts import assistant_prompt, draft_prompt, fallback_prompt
 
 
 class Command(BaseCommand):
-    help = "Publish bundled extraction prompts to Langfuse with the production label."
+    help = "Publish all bundled prompts to Langfuse with the production label."
 
     def handle(self, **options):
         lf = observability.client()
         if lf is None:
             raise CommandError("Langfuse is not configured; set the LANGFUSE_* variables.")
-        for channel in ("email", "call"):
-            info = fallback_prompt(channel)
+        bundled = [
+            fallback_prompt("email"),
+            fallback_prompt("call"),
+            draft_prompt(),
+            assistant_prompt(),
+        ]
+        for info in bundled:
             current_text = None
             try:
                 existing = lf.get_prompt(info.name, label="production", cache_ttl_seconds=0)
