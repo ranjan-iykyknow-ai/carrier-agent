@@ -42,7 +42,12 @@ LANGFUSE_BASE_URL=<from your .env>
 LANGFUSE_PUBLIC_KEY=<from your .env>
 LANGFUSE_SECRET_KEY=<from your .env>
 LANGFUSE_CAPTURE_PAYLOADS=true
+BROKER_PASSWORD=<your chosen broker login password>
 ```
+
+`BROKER_PASSWORD` is authoritative: every deploy runs `ensure_broker` and
+aligns `broker@goodlanelogistics.com` to it (rotate by changing the variable
+and redeploying). Nothing is written to disk.
 
 The `${{…}}` values are Railway reference variables — paste them literally.
 Never commit any of these; the repo's `.env` stays local-only.
@@ -64,10 +69,12 @@ Inside the container:
 python manage.py seed            # imports the dataset and processes all 329
                                  # jobs with REAL providers (~$0.45, ~15 min).
                                  # Use --no-enqueue to import without spending.
-python manage.py ensure_broker   # creates broker@goodlanelogistics.com
-cat var/dev-password.txt         # copy the password NOW — the file is
-                                 # ephemeral; the DB credential persists.
 ```
+
+The login (`broker@goodlanelogistics.com` / your `BROKER_PASSWORD`) already
+exists — the pre-deploy step created it. Without `BROKER_PASSWORD` set, run
+`python manage.py ensure_broker && cat var/dev-password.txt` here instead and
+copy the generated password immediately (the file is ephemeral).
 
 Seeding is idempotent (advisory-locked, resumable); a rerun never duplicates
 records or re-spends on completed jobs. `python manage.py retry_failed_jobs`
@@ -84,8 +91,9 @@ previews/retries any provider failures.
 
 ## Notes and deltas
 
-- **Redeploys**: the volume and database persist; only the container FS
-  (including `var/dev-password.txt`) is ephemeral.
+- **Redeploys**: the volume and database persist; only the container FS is
+  ephemeral. The broker credential lives in the database, governed by
+  `BROKER_PASSWORD`.
 - **Cost control**: reseeding never redispatches completed work. `make eval`
   never runs in deploy; run it locally.
 - Production deltas recorded in `docs/production-deltas.md` territory: object

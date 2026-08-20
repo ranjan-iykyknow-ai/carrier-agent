@@ -5,7 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "preDeployCommand": "python manage.py migrate --noinput",
+    "preDeployCommand": "bash -c 'python manage.py migrate --noinput && if [ -n \"$BROKER_PASSWORD\" ]; then python manage.py ensure_broker; fi'",
     "startCommand": "bash -c 'celery -A config worker --loglevel=info --concurrency=2 & exec gunicorn config.wsgi --worker-class gthread --workers 2 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8000}'",
     "healthcheckPath": "/healthz",
     "healthcheckTimeout": 120,
