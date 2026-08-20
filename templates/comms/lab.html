@@ -15,7 +15,7 @@
   </div>
   {% endif %}
 
-  <div class="grid items-start gap-4 xl:grid-cols-2">
+  <div class="grid items-stretch gap-4 xl:grid-cols-2">
 
     <div class="card">
       <div class="card-title">Paste a carrier email</div>
@@ -53,16 +53,16 @@
       <div id="email-preview"></div>
     </div>
 
-    <div class="card">
+    <div class="card flex flex-col">
       <div class="card-title">Upload a call recording</div>
-      <form method="post" action="{% url 'lab_audio_submit' %}" enctype="multipart/form-data" class="grid gap-2">
+      <form method="post" action="{% url 'lab_audio_submit' %}" enctype="multipart/form-data" class="flex flex-1 flex-col gap-2">
         {% csrf_token %}
         {% if audio_form.errors %}
         <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
           {% for field, errors in audio_form.errors.items %}<div>{{ errors|join:" " }}</div>{% endfor %}
         </div>
         {% endif %}
-        <label class="grid cursor-pointer place-items-center gap-1 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center hover:border-brand-400">
+        <label class="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center hover:border-brand-400">
           <span class="font-display font-semibold">Choose a .wav file</span>
           <span class="text-xs text-slate-400">PCM WAV · up to {{ max_wav_mb }} MB · up to {{ max_wav_seconds }} seconds</span>
           <input type="file" name="audio_file" accept=".wav,audio/wav,audio/x-wav" required class="text-xs"
