@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Loads — Goodlane Carrier Agent{% endblock %}
+{% block page_title %}Loads{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class="th">Load</th><th class="th">Status</th><th class="th">Route</th>
+          <th class="th">Equipment</th><th class="th">Pickup</th>
+          <th class="th text-right">Offered</th><th class="th text-right">Inquiries</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for load in loads %}
+        <tr class="hover:bg-slate-50">
+          <td class="td font-mono"><a class="text-brand-600 hover:underline" href="{% url 'load_workspace' load.external_load_id %}">{{ load.external_load_id }}</a></td>
+          <td class="td">
+            {% if load.status == "open" %}<span class="chip chip-ok chip-dot">Open</span>
+            {% elif load.status == "covered" %}<span class="chip chip-info chip-dot">Covered</span>
+            {% elif load.status == "delivered" %}<span class="chip chip-muted chip-dot">Delivered</span>
+            {% else %}<span class="chip chip-muted chip-dot">Cancelled</span>{% endif %}
+          </td>
+          <td class="td">{{ load.origin_city }}, {{ load.origin_state }} → {{ load.destination_city }}, {{ load.destination_state }}</td>
+          <td class="td">{{ load.equipment_type.display_name|default:load.equipment_type_raw }}</td>
+          <td class="td font-mono text-xs">{{ load.pickup_date|date:"M j" }}</td>
+          <td class="td text-right font-mono">{% if load.offered_rate_usd %}${{ load.offered_rate_usd|floatformat:0 }}{% else %}—{% endif %}</td>
+          <td class="td text-right">{{ load.inquiry_count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td class="td text-slate-400" colspan="7">No loads. Run <span class="font-mono">make seed</span> first.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
