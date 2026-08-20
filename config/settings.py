@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "apps.freight",
     "apps.comms",
+    "apps.aiops",
 ]
 
 MIDDLEWARE = [

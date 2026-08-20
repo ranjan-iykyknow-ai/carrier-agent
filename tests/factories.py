@@ -4,6 +4,12 @@ import hashlib
 import uuid
 from datetime import UTC, date, datetime
 
+from apps.aiops.models import (
+    AIOperation,
+    AIProviderCall,
+    EvaluationCaseResult,
+    EvaluationRun,
+)
 from apps.comms.models import (
     CallRecording,
     CommunicationEvent,
@@ -168,6 +174,53 @@ def make_transcript(recording=None, job=None, **kwargs) -> Transcript:
     }
     defaults.update(kwargs)
     return Transcript.objects.create(**defaults)
+
+
+def make_ai_operation(**kwargs) -> AIOperation:
+    defaults = {
+        "operation_type": AIOperation.OperationType.EXTRACTION,
+        "usage_category": AIOperation.UsageCategory.INGESTION,
+    }
+    defaults.update(kwargs)
+    return AIOperation.objects.create(**defaults)
+
+
+def make_provider_call(operation=None, **kwargs) -> AIProviderCall:
+    operation = operation or make_ai_operation()
+    defaults = {
+        "operation": operation,
+        "sequence": 1,
+        "provider": AIProviderCall.Provider.OPENAI,
+        "operation_name": "extraction-email",
+        "model": "gpt-5.6-luna",
+    }
+    defaults.update(kwargs)
+    return AIProviderCall.objects.create(**defaults)
+
+
+def make_evaluation_run(**kwargs) -> EvaluationRun:
+    defaults = {
+        "name": f"eval-{uuid.uuid4().hex[:8]}",
+        "dataset_version": "v1",
+        "dataset_checksum": _checksum("gold-v1"),
+        "git_commit_sha": "0" * 40,
+    }
+    defaults.update(kwargs)
+    return EvaluationRun.objects.create(**defaults)
+
+
+def make_evaluation_case(run=None, **kwargs) -> EvaluationCaseResult:
+    run = run or make_evaluation_run()
+    defaults = {
+        "run": run,
+        "case_id": f"case-{uuid.uuid4().hex[:8]}",
+        "stable_source_id": "email:CE0058",
+        "case_type": EvaluationCaseResult.CaseType.EMAIL,
+        "status": EvaluationCaseResult.Status.PASSED,
+        "expected_label_ref": "evaluations/gold/emails/CE0058.json",
+    }
+    defaults.update(kwargs)
+    return EvaluationCaseResult.objects.create(**defaults)
 
 
 def make_market_rate(snapshot=None, **kwargs) -> MarketRateHistory:
