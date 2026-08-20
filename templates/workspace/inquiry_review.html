@@ -39,6 +39,7 @@
       <span>Load <b class="text-amber-600">{{ inquiry.load_resolution_status }}</b></span>
       {% endif %}
       {% if job %}<span>Job <span class="font-mono">{{ job.status }}</span></span>{% endif %}
+      {% if trace_url %}<a class="font-semibold text-brand-600 hover:underline" href="{{ trace_url }}" target="_blank" rel="noopener">Langfuse trace ↗</a>{% endif %}
       {% if siblings %}
       <span>Also in this communication:
         {% for sibling in siblings %}

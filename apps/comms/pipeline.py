@@ -113,7 +113,11 @@ def _ensure_transcript(job, generation, transcriber) -> Transcript:
     if existing is not None:
         return existing
 
-    result, _operation = transcriber.transcribe(recording)
+    result, operation = transcriber.transcribe(
+        recording,
+        correlation_id=job.correlation_id,
+        trace_seed=f"job:{job.correlation_id}:gen:{generation}",
+    )
     segments = result.get("segments") or []
     if not result.get("raw_text") or not segments:
         raise PipelineError("transcription_failed", "The provider returned no usable speech.")
@@ -142,6 +146,7 @@ def _ensure_transcript(job, generation, transcriber) -> Transcript:
             raw_text=result["raw_text"],
             normalized_text=result.get("normalized_text") or result["raw_text"],
             provider_response=result.get("provider_response") or {},
+            ai_operation=operation,
             # A stale execution persists its output as non-current diagnostics.
             is_current=fence_holds,
         )
@@ -186,7 +191,12 @@ def _ensure_extraction(job, generation, extractor, transcript) -> ExtractionRun:
         return existing
 
     document = _build_document(event, transcript)
-    raw_output, _operation = extractor.extract(prompt, document)
+    raw_output, operation = extractor.extract(
+        prompt,
+        document,
+        correlation_id=job.correlation_id,
+        trace_seed=f"job:{job.correlation_id}:gen:{generation}",
+    )
     raw_output = _strip_nul(raw_output)
 
     try:
@@ -220,6 +230,7 @@ def _ensure_extraction(job, generation, extractor, transcript) -> ExtractionRun:
             validated_output=raw_output if validation_status == "valid" else None,
             validation_status=validation_status,
             validation_errors=errors,
+            ai_operation=operation,
             is_current=becomes_current,
         )
     if validation_status == ExtractionRun.ValidationStatus.INVALID:
