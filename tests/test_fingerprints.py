@@ -63,9 +63,7 @@ class TestEmailFingerprint:
         )
 
     def test_subject_and_body_do_not_collide_across_the_separator(self):
-        assert email_fingerprint("a@b.com", "xy", "z") != email_fingerprint(
-            "a@b.com", "x", "yz"
-        )
+        assert email_fingerprint("a@b.com", "xy", "z") != email_fingerprint("a@b.com", "x", "yz")
 
     def test_manual_paste_of_dataset_email_matches_dataset_fingerprint(self):
         emails = json.loads((DATASET / "carrier_emails.json").read_text())
