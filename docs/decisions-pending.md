@@ -26,14 +26,20 @@ Updated 2026-08-20 after the review-feedback build session (PRs #8–#11).
    Redis, storage/volume) or hand me an API token and I drive it via CLI. The app
    itself is deployable now; the remaining local work (below) doesn't block it.
 
-## Remaining build items
+## Remaining build items (agreed order)
 
-- Django admin registrations (3J).
-- Prompt-improvement cycle: the eval baseline (evaluations/reports/) localizes
-  availability/intent definition gaps — sharpen the bundled prompt, publish a
-  Langfuse candidate, re-run `make eval`, compare, promote.
-- Optional polish: htmx-swap assistant panel (currently full-page PRG), dashboard
-  cost breakdown by category.
+1. **Railway deploy** — next up. Needs the Railway project (PostgreSQL, Redis,
+   volume/storage) created by you, or an API token so I drive it via CLI.
+2. **Prompt-improvement cycle** — after deployment, per your call: sharpen the
+   bundled prompt against the eval baseline (evaluations/reports/), publish a
+   Langfuse candidate, re-run `make eval`, compare, promote.
+3. Optional polish: htmx-swap assistant panel (currently full-page PRG),
+   dashboard cost breakdown by category.
+
+Local build is complete: all P0 pages, pipeline, review workflow, lab,
+assistant/drafting, Langfuse tracing + prompts, offline + runtime evals, and
+the read-only admin inspection surface (15 PRs, 360 deterministic + 4 live
+tests green).
 
 ## Session provider spend (2026-08-20 daytime)
 
