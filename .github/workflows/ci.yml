@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: goodlane
+          POSTGRES_PASSWORD: goodlane
+          POSTGRES_DB: carrier_agent
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U goodlane -d carrier_agent"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    env:
+      SECRET_KEY: ci-only-not-a-real-secret
+      DATABASE_URL: postgres://goodlane:goodlane@localhost:5432/carrier_agent
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest
+
+  # Deploy gate: one small real call per provider, asserting on actual response
+  # schemas, so provider API drift is caught before a deploy — not after.
+  live-contract:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: goodlane
+          POSTGRES_PASSWORD: goodlane
+          POSTGRES_DB: carrier_agent
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U goodlane -d carrier_agent"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    env:
+      SECRET_KEY: ci-only-not-a-real-secret
+      DATABASE_URL: postgres://goodlane:goodlane@localhost:5432/carrier_agent
+      REDIS_URL: redis://localhost:6379/0
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      DEEPGRAM_API_KEY: ${{ secrets.DEEPGRAM_API_KEY }}
+      LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+      LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+      LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --locked
+      - name: Run live provider-contract tests
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "Provider secrets not configured on this repo — skipping live suite."
+            exit 0
+          fi
+          # pytest exits 5 when no tests match the marker; treat that as success
+          # until the first live test lands.
+          uv run pytest -m live || [ $? -eq 5 ]
