@@ -18,6 +18,21 @@ services:
       redis:
         condition: service_started
 
+  worker:
+    build: .
+    command: celery -A config worker --loglevel info
+    volumes:
+      - .:/app
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://goodlane:goodlane@db:5432/carrier_agent
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   db:
     image: postgres:16-alpine
     environment:

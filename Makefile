@@ -23,7 +23,7 @@ down: ## Stop the stack
 restart: down up ## Restart the stack
 
 logs: ## Tail application logs
-	$(COMPOSE) logs -f web
+	$(COMPOSE) logs -f web worker
 
 ps: ## Show container status
 	$(COMPOSE) ps

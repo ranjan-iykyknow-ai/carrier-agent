@@ -100,3 +100,20 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "var" / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Celery ---
+# Result backend stays disabled: job state lives on IngestionJob rows, never in
+# transient task results. Tasks tolerate at-least-once delivery (acks_late) and
+# receive only stable record UUIDs.
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_TASK_IGNORE_RESULT = True
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_TASK_SOFT_TIME_LIMIT = 540
+CELERY_TIMEZONE = "UTC"
+
+# --- Demo clock ---
+# Resolved once into DatasetSnapshot.as_of_at at seed time; application code
+# reads the stored snapshot value, never this variable, after seeding.
+DEMO_AS_OF_DATE = env("DEMO_AS_OF_DATE", default="2026-05-25")
