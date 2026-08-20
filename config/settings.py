@@ -104,6 +104,9 @@ STORAGES = {
         ),
     },
 }
+# A missing manifest entry (tests/CI run without collectstatic) falls back to
+# the plain path instead of a hard error.
+WHITENOISE_MANIFEST_STRICT = False
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "var" / "media"
 
