@@ -15,6 +15,10 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+# Behind Railway's proxy, TLS terminates upstream; trust its forwarded proto so
+# request.is_secure() and CSRF checks behave. Origins must carry the scheme.
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -108,7 +112,8 @@ STORAGES = {
 # the plain path instead of a hard error.
 WHITENOISE_MANIFEST_STRICT = False
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "var" / "media"
+# Deployed, this points at the mounted Railway volume (e.g. /data/media).
+MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "var" / "media")))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

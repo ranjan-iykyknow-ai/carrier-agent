@@ -18,5 +18,11 @@ RUN tailwindcss --help >/dev/null 2>&1 || true
 
 COPY . .
 
+# Bake the static manifest into the image; the key is build-only and secretless.
+# The Tailwind source (static/src) is build input, never a served asset.
+RUN SECRET_KEY=build-time-collectstatic DEBUG=false \
+    python manage.py collectstatic --noinput --ignore "src"
+
 EXPOSE 8000
-CMD ["gunicorn", "config.wsgi", "--worker-class", "gthread", "--workers", "2", "--threads", "4", "--timeout", "120", "--bind", "0.0.0.0:8000"]
+# Shell form so Railway's injected $PORT is honored; 8000 remains the default.
+CMD exec gunicorn config.wsgi --worker-class gthread --workers 2 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8000}
