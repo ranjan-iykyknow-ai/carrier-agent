@@ -1,7 +1,8 @@
 from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.db.models.functions import Lower
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
@@ -42,6 +43,81 @@ def loads_list(request):
         else Load.objects.none()
     )
     return render(request, "freight/loads.html", {"loads": loads})
+
+
+ONBOARDING_CHIPS = {
+    True: ("Onboarded", "chip-ok"),
+    False: ("Not onboarded", "chip-warn"),
+    None: ("Onboarding unknown", "chip-muted"),
+}
+
+
+def _carrier_compliance(carrier, as_of):
+    """Snapshot-level read of the same signals the profile page shows row-wise.
+
+    Insurance here is situated against the demo clock; per-load policy always
+    compares against the pickup date instead.
+    """
+    readings = [
+        (
+            "Authority",
+            carrier.authority_status or "not on file",
+            assess_authority(carrier.authority_status),
+        ),
+        ("Safety", carrier.safety_rating or "not on file", assess_safety(carrier.safety_rating)),
+    ]
+    if carrier.insurance_expiry is None:
+        readings.append(("Insurance", "expiry not on file", "unknown"))
+    elif carrier.insurance_expiry < as_of:
+        readings.append(("Insurance", f"expired {carrier.insurance_expiry:%b %-d, %Y}", "fail"))
+    else:
+        readings.append(("Insurance", f"valid to {carrier.insurance_expiry:%b %-d, %Y}", "pass"))
+    detail = " · ".join(f"{label}: {raw}" for label, raw, _ in readings)
+    results = [result for _, _, result in readings]
+    if "fail" in results:
+        return "Compliance issue", "chip-danger", detail
+    if "unknown" in results:
+        return "Needs review", "chip-warn", detail
+    return "Compliant", "chip-ok", detail
+
+
+@login_required
+def carriers_list(request):
+    snapshot = _active_snapshot()
+    q = request.GET.get("q", "").strip()
+    rows = []
+    if snapshot:
+        as_of = snapshot.as_of_at.date()
+        carriers = (
+            Carrier.objects.filter(dataset_snapshot=snapshot)
+            .annotate(
+                inquiry_count=Count("inquiries", distinct=True),
+                candidacy_count=Count("load_candidacies", distinct=True),
+            )
+            .order_by(Lower("company_name").asc(nulls_last=True), "source_identifier")
+        )
+        if q:
+            carriers = carriers.filter(
+                Q(company_name__icontains=q)
+                | Q(mc_number_raw__icontains=q)
+                | Q(mc_number_normalized__icontains=q)
+                | Q(dot_number_raw__icontains=q)
+                | Q(dot_number_normalized__icontains=q)
+            )
+        for carrier in carriers:
+            status_label, status_chip, status_detail = _carrier_compliance(carrier, as_of)
+            onboarding_label, onboarding_chip = ONBOARDING_CHIPS[carrier.onboarded]
+            rows.append(
+                {
+                    "carrier": carrier,
+                    "status_label": status_label,
+                    "status_chip": status_chip,
+                    "status_detail": status_detail,
+                    "onboarding_label": onboarding_label,
+                    "onboarding_chip": onboarding_chip,
+                }
+            )
+    return render(request, "freight/carriers.html", {"rows": rows, "q": q})
 
 
 def _band_geometry(context, per_mile):

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Carriers — Goodlane Carrier Agent{% endblock %}
+{% block page_title %}Carriers{% endblock %}
+{% block content %}
+<div class="card">
+  <form method="get" class="mb-3 flex gap-2">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search carriers — name, MC, DOT…"
+           class="min-w-0 max-w-sm flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+    <button type="submit" class="btn">Search</button>
+  </form>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr>
+          <th class="th">Carrier</th><th class="th">MC #</th><th class="th">Compliance</th>
+          <th class="th">Onboarding</th><th class="th text-right">Reliability</th>
+          <th class="th text-right">Loads hauled</th><th class="th text-right">Inquiries</th>
+          <th class="th text-right">Candidacies</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr class="cursor-pointer hover:bg-slate-50"
+            data-inquiries="{{ row.carrier.inquiry_count }}" data-candidacies="{{ row.carrier.candidacy_count }}"
+            onclick="window.location='{% url 'carrier_profile' row.carrier.pk %}'">
+          <td class="td">
+            <a class="font-medium text-brand-600 hover:underline" href="{% url 'carrier_profile' row.carrier.pk %}">
+              {{ row.carrier.company_name|default:"(unnamed carrier)" }}</a>
+          </td>
+          <td class="td font-mono text-xs">{{ row.carrier.mc_number_raw|default:"—" }}</td>
+          <td class="td"><span class="chip {{ row.status_chip }} chip-dot" title="{{ row.status_detail }}">{{ row.status_label }}</span></td>
+          <td class="td"><span class="chip {{ row.onboarding_chip }}">{{ row.onboarding_label }}</span></td>
+          <td class="td text-right font-mono">{% if row.carrier.reliability_score %}{{ row.carrier.reliability_score }}/5{% else %}—{% endif %}</td>
+          <td class="td text-right font-mono">{{ row.carrier.loads_completed_with_goodlane|default_if_none:"—" }}</td>
+          <td class="td text-right">{{ row.carrier.inquiry_count }}</td>
+          <td class="td text-right">{{ row.carrier.candidacy_count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td class="td text-slate-400" colspan="8">
+          {% if q %}No carrier in this snapshot matches “{{ q }}”.{% else %}No carriers. Run <span class="font-mono">make seed</span> first.{% endif %}
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
