@@ -100,3 +100,34 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "var" / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Celery ---
+# Result backend stays disabled: job state lives on IngestionJob rows, never in
+# transient task results. Tasks tolerate at-least-once delivery (acks_late) and
+# receive only stable record UUIDs.
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_TASK_IGNORE_RESULT = True
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_TASK_SOFT_TIME_LIMIT = 540
+CELERY_TIMEZONE = "UTC"
+
+# --- Demo clock ---
+# Resolved once into DatasetSnapshot.as_of_at at seed time; application code
+# reads the stored snapshot value, never this variable, after seeding.
+DEMO_AS_OF_DATE = env("DEMO_AS_OF_DATE", default="2026-05-25")
+DISPLAY_TIMEZONE = env("APP_TIME_ZONE", default="America/New_York")
+
+# --- Seed and ingestion limits ---
+DATASET_VERSION = env("DATASET_VERSION", default="goodlane-v1")
+SEED_MAX_WAV_BYTES = 25 * 1024 * 1024
+SEED_MAX_WAV_SECONDS = 600
+MAX_JOB_RETRIES = env.int("MAX_JOB_RETRIES", default=3)
+
+# --- Stale-job sweep thresholds (seconds) ---
+# Processing: generously above worker task time limits so a slow-but-alive
+# worker is not swept (the duplicate-spend window is a recorded delta).
+STALE_PROCESSING_SWEEP_SECONDS = env.int("STALE_PROCESSING_SWEEP_SECONDS", default=1800)
+# Queued applies to manual-origin jobs only; deferred dataset jobs are excluded.
+STALE_QUEUED_SWEEP_SECONDS = env.int("STALE_QUEUED_SWEEP_SECONDS", default=900)
