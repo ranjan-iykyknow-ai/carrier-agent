@@ -8,7 +8,8 @@
     </thead>
     <tbody>
       {% for row in rows %}
-      <tr class="hover:bg-slate-50">
+      <tr class="hover:bg-slate-50 {% if row.url %}cursor-pointer{% endif %}"
+          {% if row.url %}onclick="window.location='{{ row.url }}'"{% endif %}>
         <td class="td font-mono text-xs text-slate-500">
           {{ row.when|date:"M j · H:i" }}
           {% if row.when_is_fallback %}<span class="text-slate-400" title="Ingestion time; the source carries no reliable business time">· ingested</span>{% endif %}
@@ -19,12 +20,14 @@
           </span>
         </td>
         <td class="td">
+          {% if row.url %}<a href="{{ row.url }}" class="font-medium text-slate-900 hover:text-brand-600">{% endif %}
           {% if row.email %}
             {{ row.email.sender_name|default:row.email.sender_email_raw }}
             <span class="text-xs text-slate-400">{{ row.email.subject|truncatechars:48 }}</span>
           {% else %}
             <span class="font-mono text-xs">{{ row.event.external_source_id|default:row.event.stable_evidence_id }}</span>
           {% endif %}
+          {% if row.url %}</a>{% endif %}
           {% if row.inquiry and row.inquiry.carrier %}
             <div class="text-xs text-slate-500">{{ row.inquiry.carrier.company_name|default:"(unnamed carrier)" }}</div>
           {% endif %}

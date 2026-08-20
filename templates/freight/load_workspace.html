@@ -114,10 +114,10 @@
     <div class="mt-3 border-t border-slate-100 pt-3">
       <div class="mb-1 font-display text-xs font-bold uppercase tracking-wider text-amber-600">Unmatched inquiries · {{ unmatched|length }}</div>
       {% for inquiry in unmatched %}
-      <div class="text-slate-600">
+      <a href="{% url 'inquiry_review' inquiry.pk %}" class="block rounded px-1 py-0.5 text-slate-600 hover:bg-slate-50 hover:text-brand-600">
         {% if inquiry.communication_event.email_content %}{{ inquiry.communication_event.email_content.sender_name|default:inquiry.communication_event.email_content.sender_email_raw }}{% else %}<span class="font-mono text-xs">{{ inquiry.communication_event.external_source_id }}</span>{% endif %}
         — {{ inquiry.summary|truncatechars:90 }}
-      </div>
+      </a>
       {% endfor %}
     </div>
     {% endif %}
@@ -126,16 +126,17 @@
   <div class="card">
     <div class="card-title">Communication timeline</div>
     {% for inquiry in timeline %}
-    <div class="grid grid-cols-[130px_24px_1fr] gap-2 border-b border-slate-100 py-2 last:border-0">
+    <a href="{% url 'inquiry_review' inquiry.pk %}" class="grid grid-cols-[130px_24px_1fr] gap-2 border-b border-slate-100 py-2 last:border-0 hover:bg-slate-50">
       <span class="font-mono text-xs text-slate-400">
         {% if inquiry.communication_event.occurred_at %}{{ inquiry.communication_event.occurred_at|date:"M j · H:i" }}{% else %}{{ inquiry.communication_event.received_at|date:"M j · H:i" }} <span title="Ingestion time">· ingested</span>{% endif %}
       </span>
       <span class="inline-flex h-5 w-5 items-center justify-center rounded border border-slate-200 bg-slate-100 text-[10px] font-bold text-slate-500">{% if inquiry.communication_event.channel == "email" %}✉{% else %}☎{% endif %}</span>
       <span>
         <b>{{ inquiry.carrier.company_name|default:"Unresolved carrier" }}</b>
+        {% if inquiry.review_status == "needs_review" %}<span class="chip chip-warn ml-1">needs review</span>{% endif %}
         <span class="block text-xs text-slate-500">{{ inquiry.summary|truncatechars:120 }}</span>
       </span>
-    </div>
+    </a>
     {% empty %}
     <p class="text-slate-400">No communications reference this load yet.</p>
     {% endfor %}

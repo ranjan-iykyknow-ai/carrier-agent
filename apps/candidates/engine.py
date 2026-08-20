@@ -64,6 +64,8 @@ def _latest_explicit(observations):
 def derive_current_facts(candidate: CarrierLoadCandidate) -> CurrentFacts:
     inquiries = list(
         Inquiry.objects.filter(candidate_links__candidate=candidate)
+        # Rejected inquiries stay for audit but never feed operational facts.
+        .exclude(review_status=Inquiry.ReviewStatus.REJECTED)
         .select_related("communication_event")
         .order_by("created_at")
     )
