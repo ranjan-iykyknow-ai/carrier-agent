@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0085",
+ "external_source_id": "CE0085",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": null,
+  "load_reference_digits": "29000096",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "340",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Broker rate referenced ('that rate') but its amount never stated, so broker_rate_mentioned is null; $340 is a flat counter, all_in inferred."
+}

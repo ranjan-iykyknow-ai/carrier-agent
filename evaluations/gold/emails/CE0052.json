@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0052",
+ "external_source_id": "CE0052",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "load_detail_question",
+  "availability": "not_stated",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "1198743",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "'3200' is a weight from the posting, not a rate or reference number; 'before dispatch' implies intent to run the load but no explicit yes, so availability left not_stated; equipment from subject line."
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_004_rate_negotiation",
+ "external_source_id": "call_004_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "945231",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "530",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "480",
+  "multi_inquiry": false
+ },
+ "notes": "MC first given as 945241 then immediately self-corrected ('Wait. Number 945231') \u2014 final corrected value used; diarization merges some broker lines into carrier segments."
+}

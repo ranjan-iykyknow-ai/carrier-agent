@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0009",
+ "external_source_id": "CE0009",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "confirmation",
+  "availability": "confirmed",
+  "equipment_code": null,
+  "load_reference_digits": "29372289",
+  "mc_number_digits": "891234",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Clean confirmation ('We're in') with readable MC 891234; no rate discussed."
+}

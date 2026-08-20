@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0021",
+ "external_source_id": "CE0021",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "355",
+   "role": "carrier_counteroffer",
+   "basis": "unknown"
+  },
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Adjudication: auditor upheld on current_carrier_position.basis \u2014 message says only 'We could do $355' with no basis stated, so basis is 'unknown' per the never-guess/explicit-beats-inferred rules (original 'all_in' was admitted inference). Broker rate referenced ('that rate doesn't work') but value never stated, so broker_rate_mentioned stays null; equipment from subject line; all other original fields confirmed."
+}

@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0019",
+ "external_source_id": "CE0019",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "confirmation",
+  "availability": "confirmed",
+  "equipment_code": null,
+  "load_reference_digits": "29372289",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "$295 is a mutually agreed rate, not a carrier asking price or a stated broker-posted rate, so both rate fields are null; driver confirmed for 2026-05-20."
+}

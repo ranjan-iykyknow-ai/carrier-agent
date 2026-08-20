@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0006",
+ "external_source_id": "CE0006",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "218765",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "335",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "310",
+  "multi_inquiry": false
+ },
+ "notes": "Driver 'available' but tied to getting 335 vs broker's 310; equipment (box truck) only in subject; lane named, no load number."
+}

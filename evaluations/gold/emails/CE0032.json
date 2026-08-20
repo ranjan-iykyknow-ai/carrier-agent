@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0032",
+ "external_source_id": "CE0032",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": null,
+  "load_reference_digits": "29372312",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "260",
+   "role": "carrier_counteroffer",
+   "basis": "unknown"
+  },
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Adjudication: dispute on current_carrier_position.basis ACCEPTED \u2014 body only says 'We could do $260' with no all-in/per-mile/hourly statement, so basis is 'unknown' per never-guess/explicit-beats-inferred rules; broker rate referenced without a number; no equipment mentioned; all other original labels affirmed."
+}

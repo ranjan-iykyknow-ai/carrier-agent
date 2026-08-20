@@ -28,9 +28,10 @@ Updated 2026-08-20 after the review-feedback build session (PRs #8–#11).
 
 ## Remaining build items
 
-- Offline eval harness + hand-labelled gold set (`make eval`, spec 3I) — the
-  hand-labelling of ~30 emails / 10 calls is its own work item.
 - Django admin registrations (3J).
+- Prompt-improvement cycle: the eval baseline (evaluations/reports/) localizes
+  availability/intent definition gaps — sharpen the bundled prompt, publish a
+  Langfuse candidate, re-run `make eval`, compare, promote.
 - Optional polish: htmx-swap assistant panel (currently full-page PRG), dashboard
   cost breakdown by category.
 

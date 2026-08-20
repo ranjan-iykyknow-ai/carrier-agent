@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0003",
+ "external_source_id": "CE0003",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "availability",
+  "availability": "not_stated",
+  "equipment_code": null,
+  "load_reference_digits": "29372289",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Asks whether the load is still open; interest implied but carrier's own availability never explicitly stated."
+}

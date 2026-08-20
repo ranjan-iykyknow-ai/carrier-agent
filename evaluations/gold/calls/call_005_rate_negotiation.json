@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_005_rate_negotiation",
+ "external_source_id": "call_005_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "1345678",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "320",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "290",
+  "multi_inquiry": false
+ },
+ "notes": "Every segment tagged speaker 0 \u2014 diarization failed, roles worked out from content; MC read across two segments ('134' + '5678', second at conf 0.89) giving 1345678."
+}

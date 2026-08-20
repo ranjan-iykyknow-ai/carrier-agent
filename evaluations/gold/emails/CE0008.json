@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0008",
+ "external_source_id": "CE0008",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "availability",
+  "availability": "confirmed",
+  "equipment_code": "box_truck",
+  "load_reference_digits": "29372289",
+  "mc_number_digits": "891234",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Subject says 'Quote' but no price is stated anywhere; terse explicit 'Available.'"
+}

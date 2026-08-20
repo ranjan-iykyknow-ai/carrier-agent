@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_002_rate_negotiation",
+ "external_source_id": "call_002_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": true,
+  "current_carrier_position": {
+   "amount": "290",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "250",
+  "multi_inquiry": false
+ },
+ "notes": "MC transcribed as '500And38700And72' \u2014 words mixed in, unrecoverable; company name inconsistent (Chapel vs Chahal Trucking); speaker labels swap mid-call, carrier identified from content."
+}

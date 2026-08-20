@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0011",
+ "external_source_id": "CE0011",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": null,
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "345",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "310",
+  "multi_inquiry": false
+ },
+ "notes": "'At least $345' floor counter to broker's 310; no equipment, MC, or load number in content (lane name only)."
+}

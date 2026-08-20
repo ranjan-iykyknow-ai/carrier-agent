@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0046",
+ "external_source_id": "CE0046",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "problem_or_exception",
+  "availability": "not_stated",
+  "equipment_code": null,
+  "load_reference_digits": "29372343",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Subject says 'Availability' but body is a live pickup problem (at the dock, nobody there, asking for door number) \u2014 subject/body mismatch; treated as exception rather than detail question."
+}

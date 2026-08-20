@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0024",
+ "external_source_id": "CE0024",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "345",
+   "role": "carrier_counteroffer",
+   "basis": "unknown"
+  },
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Adjudication: auditor's dispute UPHELD \u2014 basis corrected from all_in to unknown; body says only 'We could do $345' with no all-in/per-mile/hourly wording, so all_in was an inference ('explicit beats inferred'; cf. CE0013 which asks for 'the all-in' explicitly). Broker rate referenced ('that rate') but never numbered, so broker_rate_mentioned stays null; equipment from subject line; all other original fields affirmed."
+}

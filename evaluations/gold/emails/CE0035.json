@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0035",
+ "external_source_id": "CE0035",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": null,
+  "load_reference_digits": "29372312",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "285",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "240",
+  "multi_inquiry": false
+ },
+ "notes": "Counter to broker's $240; flat lane rate with no unit stated, all_in inferred from context; load number only in subject."
+}

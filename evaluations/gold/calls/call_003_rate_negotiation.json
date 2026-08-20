@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_003_rate_negotiation",
+ "external_source_id": "call_003_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "sprinter_van",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": true,
+  "current_carrier_position": {
+   "amount": "375",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "340",
+  "multi_inquiry": false
+ },
+ "notes": "MC transcribed as '14Dash8Nil35Dash5' \u2014 possibly 1480355 if Nil=0, but words mixed in make it uncertain, so garbled; several long segments merge both speakers under one label."
+}

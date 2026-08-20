@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_006_rate_negotiation",
+ "external_source_id": "call_006_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "sprinter_van",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": true,
+  "current_carrier_position": {
+   "amount": "250",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "220",
+  "multi_inquiry": false
+ },
+ "notes": "MC stated twice but both garbled with words mixed in (300And45800And78 vs 300And45600And78, and they contradict each other); no load number given; speaker labels unreliable (carrier/broker lines merged in seq 6)."
+}

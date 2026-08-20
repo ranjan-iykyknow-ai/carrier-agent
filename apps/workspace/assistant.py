@@ -204,6 +204,9 @@ def run_turn(conversation, user_text: str, *, client=None) -> AssistantRun:
                 (operation.completed_at - operation.started_at).total_seconds() * 1000
             )
         operation.save()
+        from apps.aiops import runtime_evals
+
+        runtime_evals.score_assistant_run(run)
         observability.flush_safely()
         return run
 
