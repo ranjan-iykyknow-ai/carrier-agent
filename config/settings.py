@@ -124,6 +124,10 @@ DATASET_VERSION = env("DATASET_VERSION", default="goodlane-v1")
 SEED_MAX_WAV_BYTES = 25 * 1024 * 1024
 SEED_MAX_WAV_SECONDS = 600
 MAX_JOB_RETRIES = env.int("MAX_JOB_RETRIES", default=3)
+# Weak name similarity proposes review candidates only; it can never verify.
+WEAK_NAME_SIMILARITY_THRESHOLD = 0.6
+# Transcript segments below this provider confidence are visibly uncertain.
+TRANSCRIPT_LOW_CONFIDENCE_THRESHOLD = 0.7
 
 # --- Stale-job sweep thresholds (seconds) ---
 # Processing: generously above worker task time limits so a slow-but-alive
