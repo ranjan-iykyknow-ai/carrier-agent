@@ -1,77 +1,40 @@
 # Pending Decisions
 
-Questions queued for you while you were away. Answer inline or in chat; none of them
-block the work recorded below — where a default was needed I picked one and marked it.
+Updated 2026-08-20 after the review-feedback build session (PRs #8–#11).
 
-## 1. GitHub Actions secrets for the live-contract CI job
+## Resolved
 
-The `live-contract` job needs `OPENAI_API_KEY`, `DEEPGRAM_API_KEY`, and the Langfuse
-keys as **GitHub Actions secrets** on `ranjan-iykyknow-ai/carrier-agent` (encrypted by
-GitHub, visible only to CI). Until they exist the job skips itself gracefully.
+1. **GitHub Actions secrets** — resolved: the `live-contract` CI job now runs and
+   passes on every push, so the provider keys are present as repo secrets.
+2. **createsuperuser** — not needed. `make manage ARGS="ensure_broker"` idempotently
+   creates/promotes the demo broker login with staff + superuser access (the seeded
+   account already had it). Same login works for the app and `/admin`.
+3. **Langfuse** — tracing is live: pipeline, drafting, and assistant operations
+   trace to Langfuse Cloud with deterministic per-execution trace ids; the
+   extraction prompts are published there (`production` label, resolved at runtime
+   with the bundled fallback as emergency). `make manage ARGS="publish_prompts"`
+   re-aligns after prompt edits.
 
-**Decision needed:** may I run `gh secret set` for those four values from the local
-`.env`? (Alternative: you add them yourself in repo Settings → Secrets → Actions.)
+## Still open (answer when convenient)
 
-## 2. Overnight PR policy
+1. **PR policy** — I continued the overnight default: open PR → wait for CI green
+   (including live-contract) → merge. Say the word if you want review-first.
+2. **App layout vs spec 3J** — `comms/aiops/candidates/workspace` names vs the
+   spec's `ingestion/assistant/evaluation`. Boundaries match; names differ. Still
+   my lean: conform before deploy, or record the deviation and keep.
+3. **Railway** — when you want to deploy: create the Railway project (PostgreSQL,
+   Redis, storage/volume) or hand me an API token and I drive it via CLI. The app
+   itself is deployable now; the remaining local work (below) doesn't block it.
 
-The dev→main PR ceremony exists so the interviewer sees a real workflow. While you
-were asleep I proceeded as: open PR → wait for CI green → merge, since no second
-reviewer exists.
+## Remaining build items
 
-**Decision needed:** keep that, or do you want to review each PR before merge from
-now on?
+- Offline eval harness + hand-labelled gold set (`make eval`, spec 3I) — the
+  hand-labelling of ~30 emails / 10 calls is its own work item.
+- Django admin registrations (3J).
+- Optional polish: htmx-swap assistant panel (currently full-page PRG), dashboard
+  cost breakdown by category.
 
-## 3. Langfuse reviewer invite
+## Session provider spend (2026-08-20 daytime)
 
-The Langfuse Hobby plan allows 2 users. Plan of record: when you know the Goodlane
-reviewer's email, invite them as **Viewer** to the carrier-agent project.
-Nothing to do until you have the email — just flagging it lives here now.
-
-## 4. Rethemed mockups
-
-The mockup artifact now uses the real Goodlane brand (slate ink, orange accent,
-Plus Jakarta Sans / Inter). Same link as before. Any visual notes before I build the
-actual templates in the pages phase?
-
-## 5. Railway (needed only at the deploy phase, several phases away)
-
-When we get there you'll need to create the Railway project with PostgreSQL, Redis,
-and a Storage Bucket — or hand me a Railway API token and I drive it via CLI.
-No action needed yet.
-
-## 6. App layout vs spec 3J (needs your call)
-
-I implemented the domain apps as `freight / comms / aiops / inquiries / candidates /
-workspace` before reading 3J, which prescribes `common / accounts / dashboard /
-freight / ingestion / inquiries / assistant / evaluation` (with `candidates` folded
-into `inquiries` and per-file model packages). Domain **boundaries** match; names
-and file layout differ. New apps (accounts, dashboard, …) follow the spec names.
-
-**Decision needed:** conform the existing app names/layout to 3J with a mechanical
-rename (safe now — nothing is deployed; migrations regenerate cleanly), or accept
-the current names and record the deviation? I lean toward conforming before the
-deploy phase.
-
-## 7. Full dataset processed live overnight (twice)
-
-After the pipeline passed its live provider-contract tests and a 2-job real E2E,
-I processed all 329 seeded jobs with real OpenAI + Deepgram calls. The first full
-run (232 completed / 95 needs_review / 2 failed, $0.45) surfaced three real
-issues — envelope-sender identity matching, a NUL character in one model output,
-and no-load-reference availability emails flooding review — all fixed with tests.
-I then wiped and reseeded for a clean demo state. Final run: **268 completed /
-61 needs_review / 0 failed**, ≈ $0.45. Total provider spend ≈ $0.90, within the
-disclosed ~$1 estimate. The local app at http://localhost:8000 is fully populated
-(`var/dev-password.txt` holds your local login for broker@goodlanelogistics.com).
-
-## Defaults I chose overnight (flag if you disagree)
-
-- `Load.status` choices = the dataset vocabulary: `open`, `covered`, `delivered`,
-  `cancelled` (the spec never enumerated them).
-- `Carrier.authority_status` / `safety_rating` / `payment_terms_preference` are stored
-  as raw nullable text, **not** constrained choices — the compliance policy interprets
-  vocabulary (unrecognized → unknown) per the spec, and the dataset contains values
-  like the literal string `"unknown"` that must be preserved verbatim.
-- Django apps layout: `apps/freight`, `apps/comms`, `apps/inquiries`,
-  `apps/candidates`, `apps/assistant`, `apps/aiops` (spec defines models, not app
-  boundaries).
+Three manual live emails, two assistant turns, one draft, plus live-contract CI
+runs: well under $0.05 total. Cumulative project spend remains ≈ $1.
