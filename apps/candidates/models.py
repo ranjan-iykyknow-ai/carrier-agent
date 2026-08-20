@@ -8,6 +8,7 @@ exists anywhere — best rate and strongest candidate are computed at read time.
 """
 
 from django.db import models
+from django.db.models import Q
 
 from apps.base import AppendOnlyModel, TimeStampedModel
 from apps.freight.models import Carrier, Load
@@ -28,27 +29,27 @@ class CarrierLoadCandidate(TimeStampedModel):
     load = models.ForeignKey(Load, on_delete=models.PROTECT, related_name="carrier_candidacies")
     current_quote = models.ForeignKey(
         CarrierQuote,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="current_for_candidates",
     )
     current_compliance_assessment = models.ForeignKey(
         "ComplianceAssessment",
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="current_for_candidates",
     )
     current_eligibility_assessment = models.ForeignKey(
         "EligibilityAssessment",
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="current_for_candidates",
     )
-    first_seen_at = models.DateTimeField(null=True, blank=True)
-    last_activity_at = models.DateTimeField(null=True, blank=True)
+    first_seen_at = models.DateTimeField()
+    last_activity_at = models.DateTimeField()
 
     class Meta:
         constraints = [
@@ -62,8 +63,12 @@ class CarrierLoadCandidate(TimeStampedModel):
         return f"{self.carrier} for {self.load}"
 
 
-class CandidateInquiry(AppendOnlyModel):
-    """Links every relevant inquiry to the aggregate candidate history."""
+class CandidateInquiry(TimeStampedModel):
+    """Links every relevant inquiry to the aggregate candidate history.
+
+    Mutable by design: the supporting/superseding/conflicting relationship is
+    re-labeled when chronology or a broker review resolves a conflict (spec 2D).
+    """
 
     class Relationship(models.TextChoices):
         SUPPORTING = "supporting"
@@ -113,6 +118,17 @@ class ComplianceAssessment(AppendOnlyModel):
         related_name="triggered_compliance_assessments",
     )
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(authority_result__in=ComponentResult.values)
+                & Q(safety_result__in=ComponentResult.values)
+                & Q(insurance_result__in=ComponentResult.values)
+                & Q(overall_result__in=["pass", "fail", "needs_review"]),
+                name="candidates_compliance_vocab",
+            ),
+        ]
+
     def __str__(self):
         return f"Compliance {self.overall_result} ({self.policy_version})"
 
@@ -155,6 +171,26 @@ class EligibilityAssessment(AppendOnlyModel):
         blank=True,
         related_name="triggered_eligibility_assessments",
     )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(identity_result__in=ComponentResult.values)
+                & Q(equipment_result__in=ComponentResult.values)
+                & Q(availability_result__in=ComponentResult.values)
+                & Q(onboarding_result__in=ComponentResult.values)
+                & Q(
+                    final_status__in=[
+                        "blocked",
+                        "needs_compliance_review",
+                        "needs_clarification",
+                        "needs_onboarding",
+                        "eligible",
+                    ]
+                ),
+                name="candidates_eligibility_vocab",
+            ),
+        ]
 
     def __str__(self):
         return f"Eligibility {self.final_status} ({self.policy_version})"

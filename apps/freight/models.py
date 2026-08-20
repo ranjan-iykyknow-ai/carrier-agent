@@ -164,6 +164,8 @@ class Load(TimeStampedModel):
     )
     equipment_type_raw = models.CharField(max_length=100, null=True, blank=True)
     weight_lbs = models.IntegerField(null=True, blank=True)
+    # A load without a parseable pickup date is a structurally invalid import row
+    # (records_failed), because compliance and market lookups key on this date.
     pickup_date = models.DateField()
     pickup_window_raw = models.CharField(max_length=100, null=True, blank=True)
     pickup_start_at = models.DateTimeField(null=True, blank=True)
@@ -171,7 +173,7 @@ class Load(TimeStampedModel):
     pickup_window_status = models.CharField(max_length=20, choices=PickupWindowStatus.choices)
     delivery_date = models.DateField(null=True, blank=True)
     offered_rate_usd = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    shipper_name = models.CharField(max_length=200, blank=True, default="")
+    shipper_name = models.CharField(max_length=200, null=True, blank=True)
     internal_notes = models.TextField(blank=True, default="")
 
     class Meta:

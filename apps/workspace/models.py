@@ -7,12 +7,25 @@ from here.
 """
 
 from django.db import models
+from django.db.models import Q
 
 from apps.aiops.models import AIOperation
 from apps.base import AppendOnlyModel, TimeStampedModel
 from apps.candidates.models import CarrierLoadCandidate
 from apps.freight.models import Carrier, Load
 from apps.inquiries.models import EvidenceSpan, Inquiry
+
+
+class CitationSourceType(models.TextChoices):
+    EMAIL = "email"
+    CALL = "call"
+    TRANSCRIPT_SEGMENT = "transcript_segment"
+    INQUIRY = "inquiry"
+    LOAD = "load"
+    CARRIER = "carrier"
+    QUOTE = "quote"
+    ASSESSMENT = "assessment"
+    MARKET_RATE = "market_rate"
 
 
 class InquiryReviewAction(AppendOnlyModel):
@@ -105,10 +118,21 @@ class DraftEvidenceLink(AppendOnlyModel):
     evidence_span = models.ForeignKey(
         EvidenceSpan, on_delete=models.PROTECT, null=True, blank=True, related_name="draft_links"
     )
-    source_type = models.CharField(max_length=30, null=True, blank=True)
+    source_type = models.CharField(
+        max_length=30, choices=CitationSourceType.choices, null=True, blank=True
+    )
     stable_source_id = models.CharField(max_length=300, null=True, blank=True)
     fact_name = models.CharField(max_length=100)
     fact_value = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            # An evidence link must anchor to a span or a stable identifier.
+            models.CheckConstraint(
+                condition=Q(evidence_span__isnull=False) | Q(stable_source_id__isnull=False),
+                name="workspace_draft_evidence_anchor",
+            ),
+        ]
 
 
 class AssistantConversation(TimeStampedModel):
@@ -131,6 +155,15 @@ class AssistantConversation(TimeStampedModel):
     )
     title = models.CharField(max_length=300, blank=True, default="")
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.ACTIVE)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=(Q(scope="load") & Q(load__isnull=False))
+                | (Q(scope="global") & Q(load__isnull=True)),
+                name="workspace_conversation_scope_load",
+            ),
+        ]
 
     def __str__(self):
         return self.title or f"Conversation {self.id}"
@@ -235,21 +268,11 @@ class ToolExecution(AppendOnlyModel):
 
 
 class AssistantCitation(AppendOnlyModel):
-    class SourceType(models.TextChoices):
-        EMAIL = "email"
-        CALL = "call"
-        TRANSCRIPT_SEGMENT = "transcript_segment"
-        LOAD = "load"
-        CARRIER = "carrier"
-        QUOTE = "quote"
-        ASSESSMENT = "assessment"
-        MARKET_RATE = "market_rate"
-
     assistant_message = models.ForeignKey(
         AssistantMessage, on_delete=models.CASCADE, related_name="citations"
     )
     sequence = models.PositiveIntegerField()
-    source_type = models.CharField(max_length=20, choices=SourceType.choices)
+    source_type = models.CharField(max_length=20, choices=CitationSourceType.choices)
     stable_source_id = models.CharField(max_length=300)
     evidence_span = models.ForeignKey(
         EvidenceSpan,

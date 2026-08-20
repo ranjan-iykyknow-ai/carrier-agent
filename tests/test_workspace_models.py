@@ -59,6 +59,19 @@ class TestAssistant:
         conversation = make_assistant_conversation(scope="global", load=None)
         assert conversation.load is None
 
+    def test_load_scope_without_load_is_rejected(self):
+        _rejects(lambda: make_assistant_conversation(scope="load", load=None))
+
+    def test_draft_evidence_link_requires_an_anchor(self):
+        from apps.workspace.models import DraftEvidenceLink
+
+        draft = make_draft()
+        _rejects(
+            lambda: DraftEvidenceLink.objects.create(
+                draft=draft, fact_name="offered_rate", fact_value="420"
+            )
+        )
+
     def test_tool_execution_sequence_unique_per_run(self):
         from apps.workspace.models import ToolExecution
 

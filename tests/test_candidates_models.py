@@ -65,6 +65,19 @@ class TestAssessments:
             "eligible",
         }
 
+    def test_component_result_vocabulary_enforced_at_database(self):
+        _rejects(lambda: make_compliance_assessment(authority_result="maybe"))
+
+    def test_current_assessment_reference_is_protected_from_deletion(self):
+        from django.db.models import ProtectedError
+
+        candidate = make_candidate()
+        assessment = make_compliance_assessment(candidate=candidate)
+        candidate.current_compliance_assessment = assessment
+        candidate.save()
+        with pytest.raises(ProtectedError):
+            assessment.delete()
+
     def test_assessment_reason_requires_component_and_code(self):
         from apps.candidates.models import CandidateAssessmentReason
 

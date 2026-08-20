@@ -5,10 +5,13 @@ broker later concludes. Raw evidence is append-only; carrier/load associations a
 entity-resolution conclusions and live on Inquiry, never here.
 """
 
+import uuid
+
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
+from apps.aiops.models import AIOperation
 from apps.base import AppendOnlyModel, TimeStampedModel
 from apps.freight.models import DatasetSnapshot, ImportBatch
 
@@ -70,7 +73,7 @@ class EmailContent(AppendOnlyModel):
     )
     sender_email_raw = models.CharField(max_length=254)
     sender_email_normalized = models.CharField(max_length=254)
-    sender_name = models.CharField(max_length=200, blank=True, default="")
+    sender_name = models.CharField(max_length=200, null=True, blank=True)
     recipient_raw = models.CharField(max_length=254, null=True, blank=True)
     recipient_normalized = models.CharField(max_length=254, null=True, blank=True)
     subject = models.TextField(blank=True, default="")
@@ -136,7 +139,7 @@ class IngestionJob(TimeStampedModel):
     status = models.CharField(max_length=15, choices=Status.choices, default=Status.QUEUED)
     retry_count = models.PositiveIntegerField(default=0)
     content_fingerprint = models.CharField(max_length=64)
-    correlation_id = models.UUIDField(null=True, blank=True)
+    correlation_id = models.UUIDField(default=uuid.uuid4, editable=False)
     submitted_at = models.DateTimeField(default=timezone.now)
     started_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
@@ -144,6 +147,14 @@ class IngestionJob(TimeStampedModel):
     last_error_summary = models.TextField(blank=True, default="")
 
     class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(
+                    status__in=["queued", "processing", "completed", "needs_review", "failed"]
+                ),
+                name="comms_job_status_vocab",
+            ),
+        ]
         indexes = [
             models.Index(fields=["status"]),
             models.Index(fields=["content_fingerprint"]),
@@ -154,7 +165,11 @@ class IngestionJob(TimeStampedModel):
 
 
 class Transcript(AppendOnlyModel):
-    """Append-only transcription result; a retranscription creates a new row."""
+    """Append-only transcription result; a retranscription creates a new row.
+
+    Failed transcription attempts are never persisted as Transcript rows — their
+    diagnostics live in AIOperation/AIProviderCall and the job's error fields.
+    """
 
     call_recording = models.ForeignKey(
         CallRecording, on_delete=models.CASCADE, related_name="transcripts"
@@ -178,6 +193,13 @@ class Transcript(AppendOnlyModel):
     normalized_text = models.TextField()
     provider_response = models.JSONField(default=dict, blank=True)
     is_current = models.BooleanField(default=False)
+    ai_operation = models.ForeignKey(
+        AIOperation,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="transcripts",
+    )
 
     class Meta:
         constraints = [

@@ -80,6 +80,28 @@ class TestEvidenceSpan:
             )
         )
 
+    def test_body_span_requires_both_offsets(self):
+        _rejects(lambda: make_evidence_span(start_offset=0, end_offset=None))
+
+    def test_transcript_span_requires_seconds_not_offsets(self):
+        _rejects(
+            lambda: make_evidence_span(source_part="transcript", start_offset=0, end_offset=10)
+        )
+
+    def test_span_end_must_not_precede_start(self):
+        _rejects(lambda: make_evidence_span(start_offset=43, end_offset=0))
+
+    def test_stable_evidence_id_unique_within_event(self):
+        span = make_evidence_span(start_offset=0, end_offset=26)
+        _rejects(
+            lambda: make_evidence_span(
+                event=span.communication_event,
+                stable_evidence_id=span.stable_evidence_id,
+                start_offset=0,
+                end_offset=26,
+            )
+        )
+
 
 class TestInquiryFieldAssessment:
     def test_one_current_assessment_per_field(self):
@@ -193,3 +215,15 @@ class TestInquiryReviewReason:
         reason = InquiryReviewReason.objects.create(inquiry=inquiry, code="weak_carrier_match")
         assert reason.severity == "review"
         assert reason.resolved_at is None
+
+    def test_metadata_content_conflict_defaults_informational(self):
+        from apps.inquiries.models import InquiryReviewReason
+
+        code = InquiryReviewReason.Code.METADATA_CONTENT_CONFLICT
+        assert InquiryReviewReason.default_severity(code) == "informational"
+        assert InquiryReviewReason.default_severity("weak_carrier_match") == "review"
+
+
+class TestVocabularyEnforcedAtDatabase:
+    def test_review_status_vocabulary_enforced(self):
+        _rejects(lambda: make_inquiry(review_status="bogus"))

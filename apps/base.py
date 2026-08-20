@@ -23,7 +23,13 @@ class TimeStampedModel(UUIDModel):
 
 
 class AppendOnlyModel(UUIDModel):
-    """Append-only record: UUID key plus creation timestamp only."""
+    """Append-only record: UUID key plus creation timestamp only.
+
+    Append-only is a convention, not a database rule. The sanctioned mutable
+    columns are supersession pointers such as ``is_current`` and resolution
+    markers such as ``resolved_at``; everything else on these rows is written
+    once and never updated.
+    """
 
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -226,8 +226,11 @@ def make_evidence_span(event=None, **kwargs) -> EvidenceSpan:
     defaults = {
         "communication_event": event,
         "source_part": EvidenceSpan.SourcePart.BODY,
-        "stable_evidence_id": f"email:{event.external_source_id or event.id}#body:0-43",
+        "stable_evidence_id": f"email:{event.external_source_id or event.id}"
+        f"#body:{uuid.uuid4().hex[:6]}",
         "excerpt": "Can do. What's the all-in?",
+        "start_offset": 0,
+        "end_offset": 26,
     }
     defaults.update(kwargs)
     return EvidenceSpan.objects.create(**defaults)
@@ -237,7 +240,12 @@ def make_candidate(carrier=None, load=None, **kwargs) -> CarrierLoadCandidate:
     snapshot = kwargs.pop("snapshot", None) or make_snapshot()
     carrier = carrier or make_carrier(snapshot=snapshot)
     load = load or make_load(snapshot=snapshot)
-    return CarrierLoadCandidate.objects.create(carrier=carrier, load=load, **kwargs)
+    defaults = {
+        "first_seen_at": datetime(2026, 5, 18, 14, 0, tzinfo=UTC),
+        "last_activity_at": datetime(2026, 5, 25, 10, 42, tzinfo=UTC),
+    }
+    defaults.update(kwargs)
+    return CarrierLoadCandidate.objects.create(carrier=carrier, load=load, **defaults)
 
 
 def make_compliance_assessment(candidate=None, **kwargs) -> ComplianceAssessment:

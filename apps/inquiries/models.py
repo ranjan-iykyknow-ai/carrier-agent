@@ -8,7 +8,7 @@ are the product's categorical confidence.
 """
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 
 from apps.aiops.models import AIOperation
 from apps.base import AppendOnlyModel, TimeStampedModel
@@ -38,7 +38,7 @@ class ExtractionRun(AppendOnlyModel):
         INVALID = "invalid"
 
     communication_event = models.ForeignKey(
-        CommunicationEvent, on_delete=models.CASCADE, related_name="extraction_runs"
+        CommunicationEvent, on_delete=models.PROTECT, related_name="extraction_runs"
     )
     ingestion_job = models.ForeignKey(
         IngestionJob, on_delete=models.PROTECT, related_name="extraction_runs"
@@ -170,6 +170,12 @@ class Inquiry(TimeStampedModel):
                 fields=["communication_event", "sequence_number"],
                 name="inquiries_sequence_uniq",
             ),
+            models.CheckConstraint(
+                condition=Q(
+                    review_status__in=["unreviewed", "needs_review", "approved", "rejected"]
+                ),
+                name="inquiries_review_status_vocab",
+            ),
         ]
         indexes = [
             models.Index(fields=["review_status"]),
@@ -233,7 +239,7 @@ class EvidenceSpan(AppendOnlyModel):
         TRANSCRIPT = "transcript"
 
     communication_event = models.ForeignKey(
-        CommunicationEvent, on_delete=models.CASCADE, related_name="evidence_spans"
+        CommunicationEvent, on_delete=models.PROTECT, related_name="evidence_spans"
     )
     source_part = models.CharField(max_length=15, choices=SourcePart.choices)
     stable_evidence_id = models.CharField(max_length=300)
@@ -252,13 +258,35 @@ class EvidenceSpan(AppendOnlyModel):
 
     class Meta:
         constraints = [
-            # A span is char-addressed (email) or time-addressed (call), never both.
+            # Channel-appropriate shape: email spans carry both character offsets and
+            # nothing time-based; transcript spans carry both timestamps and no offsets.
             models.CheckConstraint(
-                condition=~(
-                    (Q(start_offset__isnull=False) | Q(end_offset__isnull=False))
-                    & (Q(start_seconds__isnull=False) | Q(end_seconds__isnull=False))
+                condition=(
+                    Q(source_part__in=["subject", "body"])
+                    & Q(start_offset__isnull=False)
+                    & Q(end_offset__isnull=False)
+                    & Q(start_seconds__isnull=True)
+                    & Q(end_seconds__isnull=True)
+                    & Q(transcript_segment__isnull=True)
+                )
+                | (
+                    Q(source_part="transcript")
+                    & Q(start_seconds__isnull=False)
+                    & Q(end_seconds__isnull=False)
+                    & Q(start_offset__isnull=True)
+                    & Q(end_offset__isnull=True)
                 ),
-                name="inquiries_span_offsets_xor_seconds",
+                name="inquiries_span_channel_shape",
+            ),
+            models.CheckConstraint(
+                condition=(Q(start_offset__isnull=True) | Q(end_offset__gte=F("start_offset")))
+                & (Q(start_seconds__isnull=True) | Q(end_seconds__gte=F("start_seconds"))),
+                name="inquiries_span_ordering",
+            ),
+            # Reconciliation idempotency: one span row per stable citation id per event.
+            models.UniqueConstraint(
+                fields=["communication_event", "stable_evidence_id"],
+                name="inquiries_span_stable_id_uniq",
             ),
         ]
         indexes = [models.Index(fields=["stable_evidence_id"])]
@@ -473,6 +501,15 @@ class InquiryReviewReason(AppendOnlyModel):
     severity = models.CharField(max_length=15, choices=Severity.choices, default=Severity.REVIEW)
     details = models.TextField(blank=True, default="")
     resolved_at = models.DateTimeField(null=True, blank=True)
+
+    # Codes whose reasons are warnings by default; everything else gates review.
+    DEFAULT_INFORMATIONAL_CODES = frozenset({Code.METADATA_CONTENT_CONFLICT})
+
+    @classmethod
+    def default_severity(cls, code) -> str:
+        if code in cls.DEFAULT_INFORMATIONAL_CODES:
+            return cls.Severity.INFORMATIONAL
+        return cls.Severity.REVIEW
 
     def __str__(self):
         return f"{self.code} ({self.severity})"
