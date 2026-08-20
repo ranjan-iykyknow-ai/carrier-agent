@@ -247,6 +247,25 @@ class TestReviewPaths:
         codes = set(inquiry.review_reasons.values_list("code", flat=True))
         assert "conflicting_carrier_identity" in codes
 
+    def test_availability_email_without_any_load_reference_completes(self, scenario):
+        """A cold availability announcement mentions no load: unmatched is the
+        correct state, but it must not flood the review queue."""
+        snapshot, carrier, load, event, job = scenario
+        output = valid_output(
+            load_reference=None,
+            load_reference_evidence=None,
+            intents=["availability"],
+            rates=[],
+        )
+        status = run_finalize(event, job, output)
+
+        assert status == "completed"
+        inquiry = Inquiry.objects.get(communication_event=event)
+        assert inquiry.load_id is None
+        assert inquiry.load_resolution_status == "unmatched"
+        codes = set(inquiry.review_reasons.values_list("code", flat=True))
+        assert "ambiguous_load_reference" not in codes
+
     def test_unknown_load_reference_needs_review(self, scenario):
         snapshot, carrier, load, event, job = scenario
         output = valid_output(

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Unified Inbox — Goodlane Carrier Agent{% endblock %}
+{% block page_title %}Unified Inbox{% endblock %}
+{% block content %}
+<div class="grid gap-4">
+
+  <form method="get" class="card flex flex-wrap items-center gap-2 py-2.5">
+    <select name="source" class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" onchange="this.form.submit()">
+      <option value="">All sources</option>
+      <option value="email" {% if source == "email" %}selected{% endif %}>Email</option>
+      <option value="call" {% if source == "call" %}selected{% endif %}>Call</option>
+    </select>
+    <select name="state" class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" onchange="this.form.submit()">
+      <option value="">All states</option>
+      {% for key, chip in state_options.items %}
+      <option value="{{ key }}" {% if state == key %}selected{% endif %}>{{ chip.0 }}</option>
+      {% endfor %}
+    </select>
+    <input type="search" name="q" value="{{ query }}" placeholder="Load ID, MC number, carrier, email…"
+           class="min-w-[220px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+    <button type="submit" class="btn">Filter</button>
+  </form>
+
+  {% if attention %}
+  <div class="card">
+    <div class="card-title text-amber-600">Needs attention · {{ attention|length }}</div>
+    {% include "comms/_inbox_table.html" with rows=attention %}
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-title">All communications · {{ total }}</div>
+    {% include "comms/_inbox_table.html" with rows=regular %}
+  </div>
+
+</div>
+{% endblock %}

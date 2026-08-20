@@ -132,6 +132,16 @@ class TestEmailPath:
         process_job(str(email_scenario.id), extractor=extractor)
         assert extractor.calls == 1
 
+    def test_nul_characters_in_model_output_are_sanitized_before_persistence(self, email_scenario):
+        output = valid_output(summary="Counteroffer \u0000 with a stray NUL.")
+        extractor = StubExtractor(output=output)
+        process_job(str(email_scenario.id), extractor=extractor)
+
+        email_scenario.refresh_from_db()
+        assert email_scenario.status in ("completed", "needs_review")
+        run = ExtractionRun.objects.get()
+        assert "\u0000" not in run.validated_output["inquiries"][0]["summary"]
+
     def test_invalid_schema_fails_the_job_without_canonical_records(self, email_scenario):
         extractor = StubExtractor(output={"inquiries": [{"bogus": True}]})
         process_job(str(email_scenario.id), extractor=extractor)

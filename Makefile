@@ -59,5 +59,8 @@ dbshell: ## psql into the dev database
 manage: ## Arbitrary manage.py command (ARGS="...")
 	$(RUN) python manage.py $(ARGS)
 
-seed: ## Seed the dataset (available once the seed command lands)
+seed: ## Seed the dataset
 	$(RUN) python manage.py seed $(ARGS)
+
+css: ## Build Tailwind CSS (static/css/app.css)
+	$(RUN) tailwindcss -i static/src/input.css -o static/css/app.css --minify

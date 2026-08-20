@@ -429,13 +429,18 @@ def _match_load(inquiry, snapshot, item: InquiryProposal, reasons) -> Load | Non
             inquiry.load_resolution_status = Inquiry.ResolutionStatus.VERIFIED
             inquiry.save(update_fields=["load", "load_resolution_status", "updated_at"])
             return load
-    reasons.append(
-        (
-            "ambiguous_load_reference",
-            "review",
-            "no exact load reference match in the active snapshot",
+    if item.load_reference:
+        # A stated reference (numeric or descriptive) that resolves to nothing
+        # is a broker-review case: the carrier meant a specific load.
+        reasons.append(
+            (
+                "ambiguous_load_reference",
+                "review",
+                "the stated load reference matches nothing in the active snapshot",
+            )
         )
-    )
+    # No reference at all (a cold availability announcement) stays visibly
+    # unmatched without flooding the review queue.
     inquiry.load_resolution_status = Inquiry.ResolutionStatus.UNMATCHED
     inquiry.save(update_fields=["load_resolution_status", "updated_at"])
     return None

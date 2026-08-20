@@ -856,7 +856,7 @@ class SeedRunner:
         for (status,) in rows:
             counts[status] = counts.get(status, 0) + 1
         self.summary.job_status_counts = counts
-        self.summary.jobs_left_queued = counts["queued"] - self.summary.jobs_dispatched
+        self.summary.jobs_left_queued = max(0, counts["queued"] - self.summary.jobs_dispatched)
         if counts["failed"] or self.summary.stale_jobs_swept:
             self.summary.processing_health = "attention_required"
         elif counts["queued"] or counts["processing"]:

@@ -1,0 +1,54 @@
+{% load static %}<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Goodlane Carrier Agent{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-sm text-slate-900 antialiased"
+      {% if user.is_authenticated %}hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'{% endif %}>
+{% if user.is_authenticated %}
+<div class="flex min-h-full">
+  <aside class="flex w-52 shrink-0 flex-col gap-0.5 border-r border-slate-200 bg-slate-100 p-3">
+    <div class="px-2 pb-4 pt-1">
+      <div class="font-display text-base font-extrabold tracking-tight">Goodlane<span class="text-brand-500">.</span></div>
+      <div class="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Carrier Agent</div>
+    </div>
+    {% url 'dashboard' as dashboard_url %}
+    {% url 'inbox' as inbox_url %}
+    {% url 'lab' as lab_url %}
+    {% for label, url in nav_items %}
+    <a href="{{ url }}"
+       class="rounded-lg px-3 py-1.5 font-display text-[13px] font-semibold {% if request.path == url %}bg-slate-900 text-white{% else %}text-slate-600 hover:bg-white{% endif %}">
+      {{ label }}</a>
+    {% endfor %}
+    <div class="flex-1"></div>
+    <div class="px-3 py-2 text-[11px] text-slate-400">
+      <div class="truncate">{{ user.email|default:user.username }}</div>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+        <button type="submit" class="font-semibold text-brand-600 hover:underline">Sign out</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="min-w-0 flex-1">
+    <header class="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-5 py-3">
+      <h1 class="mr-auto font-display text-base font-bold tracking-tight">{% block page_title %}{% endblock %}</h1>
+      {% if demo_clock %}
+      <span class="chip chip-brand chip-dot">Data as of {{ demo_clock|date:"M j, Y" }}</span>
+      {% endif %}
+    </header>
+    <main class="p-5">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+{% block anonymous %}{% endblock %}
+{% endif %}
+</body>
+</html>
