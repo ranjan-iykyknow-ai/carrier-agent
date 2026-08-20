@@ -5,7 +5,7 @@
 COMPOSE := docker compose
 RUN     := $(COMPOSE) run --rm web
 
-.PHONY: help build up down restart logs ps test test-live lint fmt check \
+.PHONY: help build up down restart logs ps test test-live lint fmt check eval \
         migrate makemigrations shell dbshell manage seed
 
 help: ## Show this help
@@ -61,6 +61,9 @@ manage: ## Arbitrary manage.py command (ARGS="...")
 
 seed: ## Seed the dataset
 	$(RUN) python manage.py seed $(ARGS)
+
+eval: ## Offline gold-set evaluation (fresh extractions cost money; ARGS="--reuse" is free)
+	$(RUN) python manage.py eval $(ARGS)
 
 css: ## Build Tailwind CSS (static/css/app.css)
 	$(RUN) tailwindcss -i static/src/input.css -o static/css/app.css --minify

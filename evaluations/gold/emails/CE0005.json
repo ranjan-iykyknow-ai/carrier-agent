@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0005",
+ "external_source_id": "CE0005",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "availability",
+  "availability": "confirmed",
+  "equipment_code": null,
+  "load_reference_digits": "29372289",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Explicit 'Available for this' plus a pickup-time question; no equipment, MC, or rates stated."
+}

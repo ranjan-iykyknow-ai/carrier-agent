@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0010",
+ "external_source_id": "CE0010",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "availability",
+  "availability": "confirmed",
+  "equipment_code": "box_truck",
+  "load_reference_digits": "29372289",
+  "mc_number_digits": "567234",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Explicitly states box truck available in area on 2026-05-20; asks broker to confirm rate \u2014 no carrier price stated."
+}

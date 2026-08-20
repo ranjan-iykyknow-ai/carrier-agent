@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_009_rate_negotiation",
+ "external_source_id": "call_009_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "901234",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "285",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "260",
+  "multi_inquiry": false
+ },
+ "notes": "MC spoken split across two segments (901 then 234, joined as 901234); whole call under one speaker label; no load number stated."
+}

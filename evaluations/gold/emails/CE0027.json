@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0027",
+ "external_source_id": "CE0027",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": null,
+  "load_reference_digits": "29372312",
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "280",
+   "role": "carrier_counteroffer",
+   "basis": "unknown"
+  },
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Ruling: dispute UPHELD \u2014 basis changed all_in->unknown; '$280' carries no stated basis and the original note admitted all_in was inferred, so conservative rule applies. Broker rate referenced ('That rate') but never stated numerically; load number from subject; no equipment or MC mentioned."
+}

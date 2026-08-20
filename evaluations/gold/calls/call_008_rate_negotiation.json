@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_008_rate_negotiation",
+ "external_source_id": "call_008_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "234891",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "340",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "310",
+  "multi_inquiry": false
+ },
+ "notes": "Entire call transcribed as one speaker; caller self-corrected MC from 234894 to 234891 (final taken); both caller and dispatcher named Mike; no load number stated."
+}

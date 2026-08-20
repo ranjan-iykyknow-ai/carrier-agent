@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_007_rate_negotiation",
+ "external_source_id": "call_007_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "sprinter_van",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": true,
+  "current_carrier_position": {
+   "amount": "215",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "195",
+  "multi_inquiry": false
+ },
+ "notes": "MC garbled transcription mush both times (400And56700And19 then corrected to 400And56700And89); no load number; some carrier lines tagged as speaker 0."
+}

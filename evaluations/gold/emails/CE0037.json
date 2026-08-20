@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0037",
+ "external_source_id": "CE0037",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "availability",
+  "availability": "not_stated",
+  "equipment_code": "sprinter_van",
+  "load_reference_digits": "29372312",
+  "mc_number_digits": "789012",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Adjudication: auditor upheld on availability -> not_stated. 'Interested in #29372312' expresses interest (drives primary_intent availability) but is not the explicit yes the instructions require for 'confirmed'; be-conservative rule controls. All other fields unchanged."
+}

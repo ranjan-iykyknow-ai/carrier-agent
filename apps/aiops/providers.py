@@ -134,13 +134,22 @@ class OpenAIExtractor:
     def resolve_prompt(self, channel: str) -> PromptInfo:
         return resolve_prompt_chain(fallback_prompt(channel))
 
-    def extract(self, prompt: PromptInfo, document: dict, *, correlation_id=None, trace_seed=None):
+    def extract(
+        self,
+        prompt: PromptInfo,
+        document: dict,
+        *,
+        correlation_id=None,
+        trace_seed=None,
+        usage_category=AIOperation.UsageCategory.INGESTION,
+    ):
         from apps.comms.pipeline import PipelineError
         from apps.inquiries.extraction_schema import ExtractionProposal
 
         operation = AIOperation.objects.create(
             operation_type=AIOperation.OperationType.EXTRACTION,
-            usage_category=AIOperation.UsageCategory.INGESTION,
+            # Evaluation spend is accounted separately from operational spend.
+            usage_category=usage_category,
             correlation_id=correlation_id,
             started_at=timezone.now(),
         )

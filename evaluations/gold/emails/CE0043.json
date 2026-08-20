@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0043",
+ "external_source_id": "CE0043",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "confirmation",
+  "availability": "confirmed",
+  "equipment_code": "sprinter_van",
+  "load_reference_digits": "29372312",
+  "mc_number_digits": "774321",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "Explicit 'Confirmed' for the load; factoring/payment note (OTR Solutions) is secondary to the confirmation intent; load number comes from the subject line."
+}

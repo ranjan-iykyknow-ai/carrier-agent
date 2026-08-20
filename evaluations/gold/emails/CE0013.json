@@ -1,0 +1,17 @@
+{
+ "case_id": "email-CE0013",
+ "external_source_id": "CE0013",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "availability",
+  "availability": "confirmed",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": null,
+  "broker_rate_mentioned": null,
+  "multi_inquiry": false
+ },
+ "notes": "'Can do' is an explicit yes with no stated condition; asks for the all-in rate but states no number; 'Reading to Wilmington' is a lane, not a reference."
+}

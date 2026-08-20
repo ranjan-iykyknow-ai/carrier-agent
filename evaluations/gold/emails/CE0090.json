@@ -1,0 +1,21 @@
+{
+ "case_id": "email-CE0090",
+ "external_source_id": "CE0090",
+ "channel": "email",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": null,
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "320",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "285",
+  "multi_inquiry": false
+ },
+ "notes": "Subject announces box truck availability Philadelphia-Elizabeth but body is a counter to broker's $285; lane description only, no load reference number."
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_010_rate_negotiation",
+ "external_source_id": "call_010_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "sprinter_van",
+  "load_reference_digits": null,
+  "mc_number_digits": "774321",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "420",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "395",
+  "multi_inquiry": false
+ },
+ "notes": "MC 774321 stated after a 'hold on' pause and read back/confirmed; MC line mis-attributed to speaker 0 but content shows the carrier supplied it; no load number stated."
+}

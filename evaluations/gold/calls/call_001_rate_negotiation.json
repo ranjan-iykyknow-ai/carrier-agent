@@ -1,0 +1,21 @@
+{
+ "case_id": "call-call_001_rate_negotiation",
+ "external_source_id": "call_001_rate_negotiation",
+ "channel": "call",
+ "labels": {
+  "primary_intent": "rate_negotiation",
+  "availability": "conditional",
+  "equipment_code": "box_truck",
+  "load_reference_digits": null,
+  "mc_number_digits": "776491",
+  "mc_stated_but_garbled": false,
+  "current_carrier_position": {
+   "amount": "310",
+   "role": "carrier_counteroffer",
+   "basis": "all_in"
+  },
+  "broker_rate_mentioned": "275",
+  "multi_inquiry": false
+ },
+ "notes": "Diarization merges broker lines into speaker-1 segments; MC read across two segments (776 / 491) but clear; no load number stated ('don't have the number in front of me')."
+}
