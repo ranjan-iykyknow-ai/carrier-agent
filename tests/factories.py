@@ -32,6 +32,13 @@ from apps.freight.models import (
     MarketRateHistory,
 )
 from apps.inquiries.models import EvidenceSpan, ExtractionRun, Inquiry
+from apps.workspace.models import (
+    AssistantConversation,
+    AssistantMessage,
+    AssistantRun,
+    DraftResponse,
+    InquiryReviewAction,
+)
 
 
 def _checksum(seed: str) -> str:
@@ -272,6 +279,71 @@ def make_eligibility_assessment(candidate=None, **kwargs) -> EligibilityAssessme
     }
     defaults.update(kwargs)
     return EligibilityAssessment.objects.create(**defaults)
+
+
+def make_review_action(inquiry=None, **kwargs) -> InquiryReviewAction:
+    inquiry = inquiry or make_inquiry()
+    defaults = {
+        "inquiry": inquiry,
+        "action_type": InquiryReviewAction.ActionType.APPROVE_EXTRACTION,
+        "actor_label": "broker@goodlanelogistics.com",
+        "before_snapshot": {"review_status": "needs_review"},
+        "after_snapshot": {"review_status": "approved"},
+    }
+    defaults.update(kwargs)
+    return InquiryReviewAction.objects.create(**defaults)
+
+
+def make_draft(inquiry=None, **kwargs) -> DraftResponse:
+    inquiry = inquiry or make_inquiry()
+    load = kwargs.pop("load", None) or make_load(
+        snapshot=inquiry.communication_event.dataset_snapshot
+    )
+    defaults = {
+        "inquiry": inquiry,
+        "load": load,
+        "draft_type": DraftResponse.DraftType.PROVIDE_RATE,
+        "generated_body": "All-in on load 29372450 is $420.",
+        "current_body": "All-in on load 29372450 is $420.",
+        "created_by": "broker@goodlanelogistics.com",
+    }
+    defaults.update(kwargs)
+    return DraftResponse.objects.create(**defaults)
+
+
+def make_assistant_conversation(**kwargs) -> AssistantConversation:
+    defaults = {
+        "actor_label": "broker@goodlanelogistics.com",
+        "scope": AssistantConversation.Scope.GLOBAL,
+    }
+    defaults.update(kwargs)
+    return AssistantConversation.objects.create(**defaults)
+
+
+def make_assistant_message(conversation=None, **kwargs) -> AssistantMessage:
+    conversation = conversation or make_assistant_conversation()
+    defaults = {
+        "conversation": conversation,
+        "sequence": 1,
+        "role": AssistantMessage.Role.USER,
+        "content": "Who offered the best rate for this load?",
+    }
+    defaults.update(kwargs)
+    return AssistantMessage.objects.create(**defaults)
+
+
+def make_assistant_run(conversation=None, **kwargs) -> AssistantRun:
+    conversation = conversation or make_assistant_conversation()
+    user_message = kwargs.pop("user_message", None) or make_assistant_message(
+        conversation=conversation
+    )
+    defaults = {
+        "conversation": conversation,
+        "user_message": user_message,
+        "scope_snapshot": {"scope": "global"},
+    }
+    defaults.update(kwargs)
+    return AssistantRun.objects.create(**defaults)
 
 
 def make_ai_operation(**kwargs) -> AIOperation:

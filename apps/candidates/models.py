@@ -148,7 +148,13 @@ class EligibilityAssessment(AppendOnlyModel):
         blank=True,
         related_name="triggered_eligibility_assessments",
     )
-    # triggering_review_action FK is added when the workspace app (Step 2E) lands.
+    triggering_review_action = models.ForeignKey(
+        "workspace.InquiryReviewAction",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="triggered_eligibility_assessments",
+    )
 
     def __str__(self):
         return f"Eligibility {self.final_status} ({self.policy_version})"
