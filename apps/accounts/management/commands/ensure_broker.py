@@ -30,9 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, *, email, password_file, rotate, **options):
         path = Path(password_file)
-        user, created = User.objects.get_or_create(
-            username=email, defaults={"email": email}
-        )
+        user, created = User.objects.get_or_create(username=email, defaults={"email": email})
         changed = []
         if created or rotate:
             password = secrets.token_urlsafe(12)
