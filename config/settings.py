@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "apps.comms",
     "apps.aiops",
     "apps.inquiries",
+    "apps.candidates",
 ]
 
 MIDDLEWARE = [

@@ -10,6 +10,11 @@ from apps.aiops.models import (
     EvaluationCaseResult,
     EvaluationRun,
 )
+from apps.candidates.models import (
+    CarrierLoadCandidate,
+    ComplianceAssessment,
+    EligibilityAssessment,
+)
 from apps.comms.models import (
     CallRecording,
     CommunicationEvent,
@@ -219,6 +224,54 @@ def make_evidence_span(event=None, **kwargs) -> EvidenceSpan:
     }
     defaults.update(kwargs)
     return EvidenceSpan.objects.create(**defaults)
+
+
+def make_candidate(carrier=None, load=None, **kwargs) -> CarrierLoadCandidate:
+    snapshot = kwargs.pop("snapshot", None) or make_snapshot()
+    carrier = carrier or make_carrier(snapshot=snapshot)
+    load = load or make_load(snapshot=snapshot)
+    return CarrierLoadCandidate.objects.create(carrier=carrier, load=load, **kwargs)
+
+
+def make_compliance_assessment(candidate=None, **kwargs) -> ComplianceAssessment:
+    candidate = candidate or make_candidate()
+    defaults = {
+        "candidate": candidate,
+        "policy_version": "goodlane_demo_eligibility_v1",
+        "pickup_date_used": date(2026, 5, 23),
+        "authority_result": "pass",
+        "safety_result": "pass",
+        "insurance_result": "fail",
+        "overall_result": "fail",
+        "carrier_facts_snapshot": {
+            "authority_status": "ACTIVE",
+            "safety_rating": "Satisfactory",
+            "insurance_expiry": "2026-05-15",
+        },
+        "evaluated_at": datetime(2026, 8, 20, 12, 0, tzinfo=UTC),
+    }
+    defaults.update(kwargs)
+    return ComplianceAssessment.objects.create(**defaults)
+
+
+def make_eligibility_assessment(candidate=None, **kwargs) -> EligibilityAssessment:
+    candidate = candidate or make_candidate()
+    compliance = kwargs.pop("compliance_assessment", None) or make_compliance_assessment(
+        candidate=candidate
+    )
+    defaults = {
+        "candidate": candidate,
+        "compliance_assessment": compliance,
+        "policy_version": "goodlane_demo_eligibility_v1",
+        "identity_result": "pass",
+        "equipment_result": "pass",
+        "availability_result": "pass",
+        "onboarding_result": "pass",
+        "final_status": "blocked",
+        "evaluated_at": datetime(2026, 8, 20, 12, 0, tzinfo=UTC),
+    }
+    defaults.update(kwargs)
+    return EligibilityAssessment.objects.create(**defaults)
 
 
 def make_ai_operation(**kwargs) -> AIOperation:
