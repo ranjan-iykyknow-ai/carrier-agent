@@ -272,12 +272,21 @@ def _record_reasons(
             add(component, mapped[0], mapped[1], observed, required)
 
     if equipment == "fail":
+        from apps.freight.models import EquipmentType
+
+        # Broker-readable equipment codes, never internal ids.
+        codes = {
+            e.id: e.code
+            for e in EquipmentType.objects.filter(
+                id__in=[facts.equipment_type_id, load.equipment_type_id]
+            )
+        }
         add(
             "equipment",
             "equipment_mismatch",
             "blocker",
-            str(facts.equipment_type_id or ""),
-            str(load.equipment_type_id or ""),
+            codes.get(facts.equipment_type_id, ""),
+            codes.get(load.equipment_type_id, ""),
         )
     elif facts.equipment_conflict:
         add("equipment", "equipment_conflicting", "review")

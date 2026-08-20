@@ -96,7 +96,10 @@ class TestFinalStatusPrecedence:
         link_inquiry(candidate, equipment_code="box_truck")
         assessment = assess_candidate(candidate)
         assert assessment.final_status == "blocked"
-        assert {r.code for r in assessment.reasons.all()} >= {"equipment_mismatch"}
+        mismatch = assessment.reasons.get(code="equipment_mismatch")
+        # Broker-readable equipment codes, never internal ids.
+        assert mismatch.observed_value == "box_truck"
+        assert mismatch.required_value == "refrigerated"
 
     def test_explicit_unavailability_blocks(self):
         candidate = build_candidate()
