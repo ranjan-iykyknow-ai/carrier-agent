@@ -1,0 +1,41 @@
+<div class="card" id="assistant">
+  <div class="card-title">Assistant
+    <span class="ml-1 font-sans text-[10px] font-medium normal-case tracking-normal text-slate-400">
+      {% if conversation.load %}scoped to load {{ conversation.load.external_load_id }}{% else %}global scope{% endif %} · read-only · every claim cites records
+    </span>
+  </div>
+
+  <div class="grid max-h-[420px] gap-2 overflow-y-auto">
+    {% for row in assistant_messages %}
+    {% if row.message.role == "user" %}
+    <div class="ml-8 rounded-xl rounded-br-sm bg-slate-900 px-3 py-2 text-[13px] text-white">{{ row.message.content }}</div>
+    {% elif row.message.status == "completed" %}
+    <div class="mr-8 rounded-xl rounded-bl-sm border border-slate-200 bg-slate-50 px-3 py-2 text-[13px]">
+      {{ row.message.content }}
+      {% if row.citations %}
+      <div class="mt-1.5 flex flex-wrap gap-1">
+        {% for item in row.citations %}
+        {% if item.url %}<a href="{{ item.url }}" class="chip chip-brand hover:underline">{{ item.citation.display_label }}</a>
+        {% else %}<span class="chip chip-muted" title="{{ item.citation.stable_source_id }}">{{ item.citation.display_label }}</span>{% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="mr-8 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+      The assistant could not produce a supported answer for this question. Nothing unverified is shown — try rephrasing.
+    </div>
+    {% endif %}
+    {% empty %}
+    <p class="text-xs text-slate-400">Ask about carriers, rates, eligibility, blockers, or missing information{% if conversation.load %} for this load{% endif %}. Answers cite the records they rely on.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" action="{% url 'assistant_send' %}" class="mt-3 flex gap-2">{% csrf_token %}
+    <input type="hidden" name="load" value="{{ assistant_scope_load }}">
+    <input type="text" name="message" required placeholder="e.g. Who's the strongest eligible carrier, and why?"
+           class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+    <button type="submit" class="btn btn-primary" hx-disabled-elt="this">Ask</button>
+  </form>
+  <p class="mt-1 text-[11px] text-slate-400">Synchronous and bounded (6 steps / 45s). The assistant never sends email, books capacity, or changes data.</p>
+</div>

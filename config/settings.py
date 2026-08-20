@@ -133,6 +133,12 @@ DISPLAY_TIMEZONE = env("APP_TIME_ZONE", default="America/New_York")
 # --- Providers ---
 OPENAI_MODEL_EXTRACTION = env("OPENAI_MODEL_EXTRACTION", default="gpt-5.6-luna")
 OPENAI_REASONING_EFFORT_EXTRACTION = env("OPENAI_REASONING_EFFORT_EXTRACTION", default="low")
+OPENAI_MODEL_DRAFTING = env("OPENAI_MODEL_DRAFTING", default="gpt-5.6-luna")
+OPENAI_REASONING_EFFORT_DRAFTING = env("OPENAI_REASONING_EFFORT_DRAFTING", default="low")
+OPENAI_MODEL_ASSISTANT = env("OPENAI_MODEL_ASSISTANT", default="gpt-5.6-luna")
+# gpt-5.6-luna rejects function tools combined with reasoning_effort on
+# /v1/chat/completions unless the effort is "none" (provider-contract tested).
+OPENAI_REASONING_EFFORT_ASSISTANT = env("OPENAI_REASONING_EFFORT_ASSISTANT", default="none")
 DEEPGRAM_MODEL = env("DEEPGRAM_MODEL", default="nova-3")
 DEEPGRAM_API_KEY = env("DEEPGRAM_API_KEY", default=None)
 LANGFUSE_BASE_URL = env("LANGFUSE_BASE_URL", default=None)

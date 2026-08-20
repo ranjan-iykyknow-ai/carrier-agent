@@ -89,6 +89,30 @@ class ProviderFailure(Exception):
         self.transient = transient
 
 
+def resolve_prompt_chain(fallback: PromptInfo) -> PromptInfo:
+    """Langfuse `production` label first (its SDK cache covers transient
+    outages), then the bundled emergency fallback (spec 3I)."""
+    lf = observability.client()
+    if lf is None:
+        return fallback
+    try:
+        resolved = lf.get_prompt(fallback.name, label="production", cache_ttl_seconds=300)
+    except Exception:
+        logger.warning("prompt %s resolved from the bundled fallback", fallback.name)
+        return fallback
+    if getattr(resolved, "is_fallback", False):
+        return fallback
+    text = getattr(resolved, "prompt", None)
+    if not isinstance(text, str) or not text.strip():
+        return fallback
+    return PromptInfo(
+        name=fallback.name,
+        version=str(resolved.version),
+        source="langfuse",
+        text=text,
+    )
+
+
 class OpenAIExtractor:
     """Strict structured-output extraction through the OpenAI Chat Completions API."""
 
@@ -108,28 +132,7 @@ class OpenAIExtractor:
         return self._client
 
     def resolve_prompt(self, channel: str) -> PromptInfo:
-        """Langfuse `production` label first (its SDK cache covers transient
-        outages), then the bundled emergency fallback (spec 3I)."""
-        fallback = fallback_prompt(channel)
-        lf = observability.client()
-        if lf is None:
-            return fallback
-        try:
-            resolved = lf.get_prompt(fallback.name, label="production", cache_ttl_seconds=300)
-        except Exception:
-            logger.warning("prompt %s resolved from the bundled fallback", fallback.name)
-            return fallback
-        if getattr(resolved, "is_fallback", False):
-            return fallback
-        text = getattr(resolved, "prompt", None)
-        if not isinstance(text, str) or not text.strip():
-            return fallback
-        return PromptInfo(
-            name=fallback.name,
-            version=str(resolved.version),
-            source="langfuse",
-            text=text,
-        )
+        return resolve_prompt_chain(fallback_prompt(channel))
 
     def extract(self, prompt: PromptInfo, document: dict, *, correlation_id=None, trace_seed=None):
         from apps.comms.pipeline import PipelineError

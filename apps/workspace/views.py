@@ -198,6 +198,15 @@ def inquiry_review(request, pk):
             "carrier_q": carrier_q,
             "carrier_results": carrier_results,
             "trace_url": observability.trace_url(trace_id),
+            "drafts": inquiry.drafts.exclude(status="discarded").order_by("-created_at"),
+            "draft_types": [
+                ("provide_rate", "Provide rate"),
+                ("negotiate_rate", "Negotiate rate"),
+                ("request_information", "Request information"),
+                ("confirm_next_steps", "Confirm next steps"),
+                ("decline", "Decline"),
+                ("defer", "Defer"),
+            ],
             "error": request.GET.get("error", ""),
             "questions": inquiry.questions.all(),
             "intents": inquiry.intents.order_by("-is_primary"),
@@ -257,3 +266,115 @@ def _find_load(inquiry, raw_reference: str) -> Load:
             "unknown_load", f"no load in this snapshot matches “{raw_reference.strip()}”"
         )
     return load
+
+
+@login_required
+@require_POST
+def draft_generate(request, pk):
+    from apps.workspace import drafting
+
+    inquiry = get_object_or_404(
+        Inquiry.objects.select_related("communication_event", "carrier", "load"), pk=pk
+    )
+    destination = reverse("inquiry_review", args=[inquiry.pk])
+    try:
+        drafting.generate_draft(
+            inquiry,
+            request.POST.get("draft_type", ""),
+            actor_label=_actor(request),
+            client=drafting.default_client(),
+        )
+    except drafting.DraftError as error:
+        return redirect(f"{destination}?{urlencode({'error': error.summary})}")
+    return redirect(f"{destination}#drafts")
+
+
+@login_required
+@require_POST
+def draft_action(request, pk, action):
+    from django.utils import timezone
+
+    from apps.workspace.models import DraftResponse
+
+    draft = get_object_or_404(DraftResponse, pk=pk)
+    if action == "edit":
+        draft.current_subject = request.POST.get("subject", draft.current_subject)
+        draft.current_body = request.POST.get("body", draft.current_body)
+        draft.status = DraftResponse.Status.EDITED
+        draft.save(update_fields=["current_subject", "current_body", "status", "updated_at"])
+    elif action == "copy":
+        draft.status = DraftResponse.Status.COPIED
+        draft.copied_at = timezone.now()
+        draft.save(update_fields=["status", "copied_at", "updated_at"])
+    elif action == "discard":
+        draft.status = DraftResponse.Status.DISCARDED
+        draft.save(update_fields=["status", "updated_at"])
+    else:
+        raise Http404
+    return redirect(f"{reverse('inquiry_review', args=[draft.inquiry_id])}#drafts")
+
+
+def _citation_url(stable_id: str):
+    kind, _, value = stable_id.partition(":")
+    try:
+        if kind == "load":
+            return reverse("load_workspace", args=[value])
+        if kind == "inquiry":
+            return reverse("inquiry_review", args=[value])
+        if kind == "carrier":
+            return reverse("carrier_profile", args=[value])
+    except Exception:
+        return None
+    return None
+
+
+def assistant_thread_context(actor_label, load=None):
+    from apps.workspace import assistant as assistant_service
+
+    conversation = assistant_service.find_or_create_conversation(actor_label, load=load)
+    messages = []
+    for message in conversation.messages.order_by("sequence").prefetch_related("citations"):
+        messages.append(
+            {
+                "message": message,
+                "citations": [
+                    {"citation": c, "url": _citation_url(c.stable_source_id)}
+                    for c in message.citations.all()
+                ],
+            }
+        )
+    last_run = conversation.runs.order_by("-created_at").first()
+    return {
+        "conversation": conversation,
+        "assistant_messages": messages,
+        "assistant_last_run": last_run,
+    }
+
+
+@login_required
+def assistant_page(request):
+    context = assistant_thread_context(_actor(request))
+    context["assistant_scope_load"] = ""
+    return render(request, "workspace/assistant.html", context)
+
+
+@login_required
+@require_POST
+def assistant_send(request):
+    from apps.freight.models import DatasetSnapshot
+    from apps.workspace import assistant as assistant_service
+
+    text = request.POST.get("message", "").strip()
+    reference = request.POST.get("load", "").strip()
+    load = None
+    if reference:
+        snapshot = DatasetSnapshot.objects.filter(is_active=True).first()
+        load = get_object_or_404(Load, dataset_snapshot=snapshot, external_load_id=reference)
+    destination = (
+        f"{reverse('load_workspace', args=[reference])}#assistant" if load else reverse("assistant")
+    )
+    if not text:
+        return redirect(destination)
+    conversation = assistant_service.find_or_create_conversation(_actor(request), load=load)
+    assistant_service.run_turn(conversation, text, client=assistant_service.default_client())
+    return redirect(destination)
