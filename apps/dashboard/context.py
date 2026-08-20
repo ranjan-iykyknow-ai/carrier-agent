@@ -23,5 +23,6 @@ def shell(request):
         "nav_items": [
             ("Dashboard", reverse("dashboard")),
             ("Unified Inbox", reverse("inbox")),
+            ("Loads", reverse("loads")),
         ],
     }
