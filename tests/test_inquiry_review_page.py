@@ -102,6 +102,9 @@ class TestReviewPageEmail:
         assert "weak_carrier_match" in html
         assert "Approve" in html
         assert "Reject" in html
+        # The decision lives in the header summary card — visible without
+        # scrolling, above the source evidence.
+        assert html.index("Approve") < html.index("Original email")
 
     def test_call_page_renders_transcript_and_audio(self, client, broker):
         snapshot = make_snapshot(is_active=True)
