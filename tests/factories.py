@@ -4,6 +4,13 @@ import hashlib
 import uuid
 from datetime import UTC, date, datetime
 
+from apps.comms.models import (
+    CallRecording,
+    CommunicationEvent,
+    EmailContent,
+    IngestionJob,
+    Transcript,
+)
 from apps.freight.models import (
     Carrier,
     DatasetSnapshot,
@@ -82,6 +89,85 @@ def make_carrier(snapshot=None, **kwargs) -> Carrier:
     }
     defaults.update(kwargs)
     return Carrier.objects.create(**defaults)
+
+
+def make_communication_event(snapshot=None, **kwargs) -> CommunicationEvent:
+    snapshot = snapshot or make_snapshot()
+    unique = uuid.uuid4().hex
+    defaults = {
+        "dataset_snapshot": snapshot,
+        "channel": "email",
+        "origin": "dataset",
+        "external_source_id": f"CE{unique[:6]}",
+        "stable_evidence_id": f"email:CE{unique[:6]}",
+        "occurred_at": datetime(2026, 5, 18, 14, 0, tzinfo=UTC),
+        "content_fingerprint": _checksum(unique),
+    }
+    defaults.update(kwargs)
+    return CommunicationEvent.objects.create(**defaults)
+
+
+def make_email_content(event=None, **kwargs) -> EmailContent:
+    event = event or make_communication_event(channel="email")
+    defaults = {
+        "communication_event": event,
+        "sender_email_raw": "desmond@atlanticcarriersinc.com",
+        "sender_email_normalized": "desmond@atlanticcarriersinc.com",
+        "subject": "Carrier inquiry - load #29372450",
+        "body_text": "Can do. What's the all-in?",
+    }
+    defaults.update(kwargs)
+    return EmailContent.objects.create(**defaults)
+
+
+def make_call_recording(event=None, **kwargs) -> CallRecording:
+    event = event or make_communication_event(
+        channel="call", stable_evidence_id=f"call:{uuid.uuid4().hex[:10]}.wav"
+    )
+    defaults = {
+        "communication_event": event,
+        "original_filename": "call_012_rate_negotiation.wav",
+        "storage_key": f"calls/{uuid.uuid4()}.wav",
+        "mime_type": "audio/wav",
+        "byte_size": 1_024_000,
+        "sha256_checksum": _checksum(uuid.uuid4().hex),
+        "audio_format": "wav",
+    }
+    defaults.update(kwargs)
+    return CallRecording.objects.create(**defaults)
+
+
+def make_ingestion_job(event=None, **kwargs) -> IngestionJob:
+    event = event or make_communication_event()
+    defaults = {
+        "origin": event.origin,
+        "source_type": event.channel,
+        "communication_event": event,
+        "content_fingerprint": event.content_fingerprint,
+    }
+    defaults.update(kwargs)
+    return IngestionJob.objects.create(**defaults)
+
+
+def make_transcript(recording=None, job=None, **kwargs) -> Transcript:
+    recording = recording or make_call_recording()
+    job = (
+        job
+        or IngestionJob.objects.filter(communication_event=recording.communication_event).first()
+        or make_ingestion_job(event=recording.communication_event)
+    )
+    defaults = {
+        "call_recording": recording,
+        "ingestion_job": job,
+        "retry_generation": 0,
+        "provider": "deepgram",
+        "requested_model": "nova-3",
+        "raw_text": "Hey Sam, this is Carlos over at Blue Ridge.",
+        "normalized_text": "Hey Sam, this is Carlos over at Blue Ridge.",
+        "is_current": False,
+    }
+    defaults.update(kwargs)
+    return Transcript.objects.create(**defaults)
 
 
 def make_market_rate(snapshot=None, **kwargs) -> MarketRateHistory:

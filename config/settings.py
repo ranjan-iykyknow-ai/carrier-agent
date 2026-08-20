@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_htmx",
     "apps.freight",
+    "apps.comms",
 ]
 
 MIDDLEWARE = [
