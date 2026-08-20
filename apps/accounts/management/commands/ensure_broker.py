@@ -1,11 +1,17 @@
-"""Idempotent local broker login: replaces manual createsuperuser for the demo.
+"""Idempotent broker login: replaces manual createsuperuser for the demo.
 
-Creates (or promotes) the demo broker account with staff and superuser access so
-one login works for both the product and Django admin. The generated password is
-written to a git-ignored file, never printed; an existing password is preserved
-unless --rotate is passed.
+Creates (or promotes) the demo broker account with staff and superuser access
+so one login works for both the product and Django admin.
+
+Password sources, in order:
+- BROKER_PASSWORD environment variable, when present, is authoritative — set
+  on creation and re-aligned whenever the stored password drifts from it
+  (rotate by changing the variable and redeploying). Nothing touches disk.
+- Otherwise a password is generated once and written to a git-ignored file;
+  an existing password is preserved unless --rotate is passed.
 """
 
+import os
 import secrets
 from pathlib import Path
 
@@ -25,14 +31,19 @@ class Command(BaseCommand):
         parser.add_argument(
             "--rotate",
             action="store_true",
-            help="Issue a fresh password even when the account already exists.",
+            help="Issue a fresh generated password (ignored when BROKER_PASSWORD is set).",
         )
 
     def handle(self, *, email, password_file, rotate, **options):
+        env_password = os.environ.get("BROKER_PASSWORD")
         path = Path(password_file)
         user, created = User.objects.get_or_create(username=email, defaults={"email": email})
         changed = []
-        if created or rotate:
+        if env_password:
+            if created or not user.check_password(env_password):
+                user.set_password(env_password)
+                changed.append("password set from the environment")
+        elif created or rotate:
             password = secrets.token_urlsafe(12)
             user.set_password(password)
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -46,5 +57,5 @@ class Command(BaseCommand):
             changed.append("promoted to staff + superuser")
         user.save()
         state = "created" if created else "exists"
-        detail = f" ({'; '.join(changed)})" if changed else ""
+        detail = f" ({'; '.join(changed)})" if changed else " (up to date)"
         self.stdout.write(f"Broker login {email}: {state}{detail}")
