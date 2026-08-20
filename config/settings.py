@@ -119,6 +119,13 @@ CELERY_TIMEZONE = "UTC"
 DEMO_AS_OF_DATE = env("DEMO_AS_OF_DATE", default="2026-05-25")
 DISPLAY_TIMEZONE = env("APP_TIME_ZONE", default="America/New_York")
 
+# --- Providers ---
+OPENAI_MODEL_EXTRACTION = env("OPENAI_MODEL_EXTRACTION", default="gpt-5.6-luna")
+OPENAI_REASONING_EFFORT_EXTRACTION = env("OPENAI_REASONING_EFFORT_EXTRACTION", default="low")
+DEEPGRAM_MODEL = env("DEEPGRAM_MODEL", default="nova-3")
+DEEPGRAM_API_KEY = env("DEEPGRAM_API_KEY", default=None)
+PROVIDER_TIMEOUT_SECONDS = env.int("PROVIDER_TIMEOUT_SECONDS", default=60)
+
 # --- Seed and ingestion limits ---
 DATASET_VERSION = env("DATASET_VERSION", default="goodlane-v1")
 SEED_MAX_WAV_BYTES = 25 * 1024 * 1024

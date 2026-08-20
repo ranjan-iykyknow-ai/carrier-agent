@@ -184,6 +184,31 @@ class TestHappyPath:
         )
 
 
+class TestEnvelopeIdentity:
+    def test_known_sender_address_verifies_carrier_without_body_mc(self, scenario):
+        snapshot, carrier, load, event, job = scenario
+        from apps.freight.models import CarrierContact
+
+        CarrierContact.objects.create(
+            carrier=carrier,
+            email_raw="cmendez@blueridgetransport.com",
+            email_normalized="cmendez@blueridgetransport.com",
+            is_primary=True,
+        )
+        event.email_content.sender_email_normalized = "cmendez@blueridgetransport.com"
+        event.email_content.save()
+
+        output = valid_output(mc_number=None, mc_number_evidence=None)
+        status = run_finalize(event, job, output)
+
+        assert status == "completed"
+        inquiry = Inquiry.objects.get(communication_event=event)
+        assert inquiry.carrier_id == carrier.id
+        assert inquiry.carrier_resolution_status == "verified"
+        match = inquiry.carrier_matches.get(is_selected=True)
+        assert match.primary_method == "email"
+
+
 class TestReviewPaths:
     def test_weak_name_only_needs_review_without_selection(self, scenario):
         snapshot, carrier, load, event, job = scenario

@@ -137,7 +137,7 @@ def _reconcile_one(event, extraction_run, sequence: int, item: InquiryProposal) 
         _assess_field(inquiry, grounder, "conditions", item.conditions, item.conditions_evidence)
 
     _persist_quotes(inquiry, grounder, item, reasons)
-    carrier = _match_carrier(inquiry, snapshot, item, reasons)
+    carrier = _match_carrier(inquiry, snapshot, item, reasons, event=event)
     load = _match_load(inquiry, snapshot, item, reasons)
     _compare_untrusted_metadata(event, inquiry, item, reasons)
     _flag_low_confidence_evidence(inquiry, grounder, item, reasons)
@@ -302,7 +302,9 @@ def _assess_rate_field(inquiry, item, carrier_positions):
     )
 
 
-def _match_carrier(inquiry, snapshot, item: InquiryProposal, reasons) -> Carrier | None:
+def _match_carrier(
+    inquiry, snapshot, item: InquiryProposal, reasons, *, event=None
+) -> Carrier | None:
     exact: dict = {}  # carrier_id -> (carrier, method)
 
     def record(carrier, method):
@@ -316,10 +318,18 @@ def _match_carrier(inquiry, snapshot, item: InquiryProposal, reasons) -> Carrier
     if dot:
         for carrier in Carrier.objects.filter(dataset_snapshot=snapshot, dot_number_normalized=dot):
             record(carrier, "dot_number")
+    # The envelope sender address is deterministic evidence, independent of what
+    # the model extracted from the text; most dataset emails verify through it.
+    email_signals = set()
+    envelope = getattr(event, "email_content", None) if event is not None else None
+    if envelope and envelope.sender_email_normalized:
+        email_signals.add(envelope.sender_email_normalized)
     if item.contact_email:
+        email_signals.add(item.contact_email.strip().casefold())
+    for signal in email_signals:
         for contact in CarrierContact.objects.filter(
             carrier__dataset_snapshot=snapshot,
-            email_normalized=item.contact_email.strip().casefold(),
+            email_normalized=signal,
         ).select_related("carrier"):
             record(contact.carrier, "email")
     if item.contact_phone:
