@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
+from django.db.models import Case, Count, IntegerField, Q, Value, When
 from django.db.models.functions import Lower
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
@@ -31,14 +31,24 @@ def _active_snapshot():
     return DatasetSnapshot.objects.filter(is_active=True).first()
 
 
+# Actionable loads lead; alphabetical status order would put cancelled on top.
+LOAD_STATUS_RANK = Case(
+    When(status=Load.Status.OPEN, then=Value(0)),
+    When(status=Load.Status.COVERED, then=Value(1)),
+    When(status=Load.Status.DELIVERED, then=Value(2)),
+    default=Value(3),
+    output_field=IntegerField(),
+)
+
+
 @login_required
 def loads_list(request):
     snapshot = _active_snapshot()
     loads = (
         Load.objects.filter(dataset_snapshot=snapshot)
         .select_related("equipment_type")
-        .annotate(inquiry_count=Count("inquiries"))
-        .order_by("status", "pickup_date", "external_load_id")
+        .annotate(inquiry_count=Count("inquiries"), status_rank=LOAD_STATUS_RANK)
+        .order_by("status_rank", "pickup_date", "external_load_id")
         if snapshot
         else Load.objects.none()
     )
@@ -185,7 +195,10 @@ def load_workspace(request, external_load_id):
             "current_quote",
             "current_eligibility_assessment__compliance_assessment",
         )
-        .prefetch_related("current_eligibility_assessment__reasons")
+        .prefetch_related(
+            "current_eligibility_assessment__reasons",
+            "candidate_inquiries__inquiry__communication_event",
+        )
     ):
         assessment = candidate.current_eligibility_assessment
         label, chip = ("Unknown", "chip-muted")
@@ -200,10 +213,24 @@ def load_workspace(request, external_load_id):
                 if reason.severity in ("blocker", "review")
             ]
         quote = candidate.current_quote
+        # Row click opens the candidate's latest conversation (what needs
+        # clarifying), not the carrier dossier — that stays on the name link.
+        links = list(candidate.candidate_inquiries.all())
+        review_inquiry = None
+        if links:
+            review_inquiry = max(
+                links,
+                key=lambda link: (
+                    link.inquiry.communication_event.occurred_at
+                    or link.inquiry.communication_event.received_at
+                    or link.inquiry.created_at
+                ),
+            ).inquiry
         candidates.append(
             {
                 "candidate": candidate,
                 "carrier": candidate.carrier,
+                "review_inquiry": review_inquiry,
                 "quote": quote,
                 "quote_per_mile": quote_as_per_mile(quote, load) if quote else None,
                 "status_label": label,

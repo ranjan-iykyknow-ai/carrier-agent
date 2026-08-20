@@ -148,6 +148,32 @@ class TestLoadWorkspace:
         response = client.get(reverse("load_workspace", args=["99999999"]))
         assert response.status_code == 404
 
+    def test_candidate_row_opens_inquiry_review_while_name_opens_profile(
+        self, client, broker, workspace
+    ):
+        """The broker's row-click intent is "what's going on / what needs clarifying"
+        (the inquiry review), not the carrier dossier — that stays on the name."""
+        snapshot, load = workspace
+        candidate = add_candidate(snapshot, load, company="Atlantic Carriers Inc", amount="455")
+        inquiry = candidate.candidate_inquiries.get().inquiry
+
+        content = client.get(reverse("load_workspace", args=["29372450"])).content.decode()
+
+        review_url = reverse("inquiry_review", args=[inquiry.pk])
+        profile_url = reverse("carrier_profile", args=[candidate.carrier.pk])
+        assert f"window.location='{review_url}'" in content
+        assert f'href="{profile_url}"' in content
+
+    def test_candidate_row_without_inquiry_falls_back_to_profile(self, client, broker, workspace):
+        snapshot, load = workspace
+        carrier = make_carrier(snapshot=snapshot, company_name="Silent Partner Trucking")
+        make_candidate(carrier=carrier, load=load)
+
+        content = client.get(reverse("load_workspace", args=["29372450"])).content.decode()
+
+        profile_url = reverse("carrier_profile", args=[carrier.pk])
+        assert f"window.location='{profile_url}'" in content
+
 
 class TestLoadsList:
     def test_lists_loads_with_links(self, client, broker, workspace):
@@ -156,3 +182,29 @@ class TestLoadsList:
         content = response.content.decode()
         assert response.status_code == 200
         assert "29372450" in content
+
+    def test_open_loads_first_cancelled_last(self, client, broker):
+        snapshot = make_snapshot(is_active=True)
+        equipment = make_equipment()
+        for external_id, status in (
+            ("29372491", "cancelled"),
+            ("29372492", "delivered"),
+            ("29372493", "open"),
+            ("29372494", "covered"),
+        ):
+            make_load(
+                snapshot=snapshot,
+                equipment_type=equipment,
+                external_load_id=external_id,
+                status=status,
+                pickup_date=date(2026, 5, 20),
+            )
+
+        content = client.get(reverse("loads")).content.decode()
+
+        assert (
+            content.index("29372493")  # open
+            < content.index("29372494")  # covered
+            < content.index("29372492")  # delivered
+            < content.index("29372491")  # cancelled
+        )
