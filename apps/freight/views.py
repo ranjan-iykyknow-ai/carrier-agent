@@ -155,6 +155,11 @@ def load_workspace(request, external_load_id):
         .order_by("-communication_event__occurred_at", "-communication_event__received_at")
     )
 
+    from apps.workspace.views import assistant_thread_context
+
+    assistant_context = assistant_thread_context(
+        request.user.email or request.user.username, load=load
+    )
     return render(
         request,
         "freight/load_workspace.html",
@@ -168,6 +173,8 @@ def load_workspace(request, external_load_id):
             "candidates": candidates,
             "unmatched": unmatched,
             "timeline": timeline,
+            "assistant_scope_load": load.external_load_id,
+            **assistant_context,
         },
     )
 

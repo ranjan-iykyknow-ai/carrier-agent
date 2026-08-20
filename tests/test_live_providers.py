@@ -88,3 +88,24 @@ class TestDeepgramContract:
             assert operation.estimated_cost is not None
         finally:
             default_storage.delete(key)
+
+
+class TestAssistantToolContract:
+    def test_model_accepts_function_tools_with_configured_effort(self):
+        """gpt-5.6-luna rejects tools + reasoning_effort unless 'none'; catch drift."""
+        from openai import OpenAI
+
+        from apps.workspace.tools import tool_schemas
+
+        client = OpenAI(timeout=settings.PROVIDER_TIMEOUT_SECONDS, max_retries=0)
+        response = client.chat.completions.create(
+            model=settings.OPENAI_MODEL_ASSISTANT,
+            messages=[
+                {"role": "system", "content": "Call get_load for load 29372450."},
+                {"role": "user", "content": "What do we know about load 29372450?"},
+            ],
+            tools=tool_schemas(),
+            reasoning_effort=settings.OPENAI_REASONING_EFFORT_ASSISTANT,
+        )
+        message = response.choices[0].message
+        assert message.tool_calls or message.content
