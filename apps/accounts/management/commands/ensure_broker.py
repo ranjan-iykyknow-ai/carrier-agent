@@ -4,8 +4,8 @@ Creates (or promotes) the demo broker account with staff and superuser access
 so one login works for both the product and Django admin.
 
 Password sources, in order:
-- BROKER_PASSWORD environment variable, when present, is authoritative — set
-  on creation and re-aligned whenever the stored password drifts from it
+- BROKER_PASSWORD (or DEMO_USER_PASSWORD) environment variable, when present,
+  is authoritative — set on creation and re-aligned whenever it drifts
   (rotate by changing the variable and redeploying). Nothing touches disk.
 - Otherwise a password is generated once and written to a git-ignored file;
   an existing password is preserved unless --rotate is passed.
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *, email, password_file, rotate, **options):
-        env_password = os.environ.get("BROKER_PASSWORD")
+        env_password = os.environ.get("BROKER_PASSWORD") or os.environ.get("DEMO_USER_PASSWORD")
         path = Path(password_file)
         user, created = User.objects.get_or_create(username=email, defaults={"email": email})
         changed = []
