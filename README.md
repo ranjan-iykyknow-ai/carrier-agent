@@ -18,22 +18,24 @@ Langfuse (tracing, prompts, evaluation) · uv · Railway (deployment)
 
 ## Local development
 
-Prerequisites: [uv](https://docs.astral.sh/uv/), Docker.
+Prerequisites: Docker. Everything runs inside containers through `make` — no host
+Python needed (`uv` on the host is only useful for editing the lockfile / IDE support).
 
 ```bash
 cp .env.example .env        # fill in provider keys
-docker compose up -d        # PostgreSQL 16 + Redis 7
-uv sync
-uv run python manage.py migrate
-uv run python manage.py runserver
+make build                  # build the application image
+make migrate                # apply database migrations
+make up                     # start web + PostgreSQL 16 + Redis 7
 ```
+
+`make help` lists every target.
 
 ## Tests
 
 ```bash
-uv run pytest               # deterministic suite (default: excludes live tests)
-uv run pytest -m live       # live provider-contract tests (real API calls, costs money)
-uv run ruff check .
+make test                   # deterministic suite (default: excludes live tests)
+make test-live              # live provider-contract tests (real API calls, costs money)
+make lint                   # ruff check + format check
 ```
 
 The deterministic suite stubs providers only at the socket boundary and tests all
