@@ -258,3 +258,48 @@ class TestInboxNavigation:
         # merely the lowest sequence number.
         assert reverse("inquiry_review", args=[reviewable.pk]) in html
         assert reverse("inquiry_review", args=[first.pk]) not in html
+
+
+class TestReadability:
+    def test_evidence_chips_carry_explanatory_tooltips(self, client, broker):
+        _, event, email, inquiry = build_email_case()
+        InquiryFieldAssessment.objects.create(
+            inquiry=inquiry,
+            field_name="rate",
+            evidence_status="explicit",
+            value_snapshot="1850",
+        )
+        InquiryFieldAssessment.objects.create(
+            inquiry=inquiry,
+            field_name="equipment",
+            evidence_status="inferred",
+            value_snapshot="box truck",
+        )
+
+        response = client.get(reverse("inquiry_review", args=[inquiry.pk]))
+
+        html = response.content.decode()
+        # Categorical confidence chips explain themselves on hover.
+        assert 'title="Stated in the source' in html
+        assert 'title="Proposed by the model' in html
+
+    def test_matched_load_rows_link_to_the_load_workspace(self, client, broker):
+        from apps.inquiries.models import InquiryLoadMatch
+        from tests.factories import make_load
+
+        snapshot, event, email, inquiry = build_email_case()
+        load = make_load(snapshot=snapshot, external_load_id="29372460")
+        InquiryLoadMatch.objects.create(
+            inquiry=inquiry,
+            load=load,
+            match_tier="exact",
+            primary_method="external_load_id",
+            status="verified",
+            is_selected=True,
+            selection_source="deterministic",
+        )
+
+        response = client.get(reverse("inquiry_review", args=[inquiry.pk]))
+
+        html = response.content.decode()
+        assert reverse("load_workspace", args=["29372460"]) in html

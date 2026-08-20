@@ -26,7 +26,7 @@
 
   <div class="grid items-start gap-4 xl:grid-cols-[380px_1fr]">
 
-    <div class="grid gap-4">
+    <div class="min-w-0 grid gap-4">
       <div class="card">
         <div class="card-title">Compliance <span class="ml-1 font-sans text-[10px] font-medium normal-case tracking-normal text-slate-400">raw dataset values, interpreted by policy</span></div>
         {% for row in compliance %}
@@ -91,7 +91,7 @@
       {% endif %}
     </div>
 
-    <div class="grid gap-4">
+    <div class="min-w-0 grid gap-4">
       <div class="card">
         <div class="card-title">Load candidacies · {{ candidacies|length }}</div>
         <div class="overflow-x-auto">
