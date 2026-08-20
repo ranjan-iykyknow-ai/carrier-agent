@@ -119,11 +119,22 @@ CELERY_TIMEZONE = "UTC"
 DEMO_AS_OF_DATE = env("DEMO_AS_OF_DATE", default="2026-05-25")
 DISPLAY_TIMEZONE = env("APP_TIME_ZONE", default="America/New_York")
 
+# --- Providers ---
+OPENAI_MODEL_EXTRACTION = env("OPENAI_MODEL_EXTRACTION", default="gpt-5.6-luna")
+OPENAI_REASONING_EFFORT_EXTRACTION = env("OPENAI_REASONING_EFFORT_EXTRACTION", default="low")
+DEEPGRAM_MODEL = env("DEEPGRAM_MODEL", default="nova-3")
+DEEPGRAM_API_KEY = env("DEEPGRAM_API_KEY", default=None)
+PROVIDER_TIMEOUT_SECONDS = env.int("PROVIDER_TIMEOUT_SECONDS", default=60)
+
 # --- Seed and ingestion limits ---
 DATASET_VERSION = env("DATASET_VERSION", default="goodlane-v1")
 SEED_MAX_WAV_BYTES = 25 * 1024 * 1024
 SEED_MAX_WAV_SECONDS = 600
 MAX_JOB_RETRIES = env.int("MAX_JOB_RETRIES", default=3)
+# Weak name similarity proposes review candidates only; it can never verify.
+WEAK_NAME_SIMILARITY_THRESHOLD = 0.6
+# Transcript segments below this provider confidence are visibly uncertain.
+TRANSCRIPT_LOW_CONFIDENCE_THRESHOLD = 0.7
 
 # --- Stale-job sweep thresholds (seconds) ---
 # Processing: generously above worker task time limits so a slow-but-alive
