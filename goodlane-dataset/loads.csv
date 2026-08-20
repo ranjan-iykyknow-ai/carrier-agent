@@ -1,0 +1,51 @@
+load_id,origin_city,origin_state,origin_zip,destination_city,destination_state,destination_zip,distance_miles,equipment_type,weight_lbs,pickup_date,pickup_window,delivery_date,offered_rate_usd,status,shipper_name,internal_notes
+29372289,Reading,PA,19601,Wilmington,DE,19801,82,Box Truck,2800,2026-05-20,07:00-14:00,2026-05-20,310,delivered,Goodlane Internal,completed - carrier SMR Trucking
+29372312,Bethlehem,PA,18015,Camden,NJ,08103,71,Sprinter Van,,2026-05-21,09:00-12:00,2026-05-21,240,covered,Jumpstart Athletics,
+29372343,Easton,PA,18045,Trenton,NJ,08619,54,Box Truck,,2026-05-21,08:00-17:00,2026-05-21,275,open,Goodlane Internal,"office materials, no dock"
+29372399,Allentown,PA,18101,Philadelphia,PA,19103,60,Box Truck,3200,2026-05-22,07:00-15:00,2026-05-22,250,open,Goodlane Internal,fragile - handle with care
+29372421,Trenton,NJ,08609,Newark,NJ,07102,45,Box Truck,,2026-05-22,10:00,2026-05-22,220,open,,time window TBD by shipper
+29372450,Philadelphia,PA,19146,New York,NY,10001,97,Box Truck,4100,2026-05-23,08:00-12:00,2026-05-23,420,open,Jumpstart Athletics,needs liftgate
+29372475,Newark,NJ,07102,Bridgeport,CT,06601,90,Box Truck,,2026-05-24,morning,2026-05-24,380,open,,
+29372490,Harrisburg,PA,17101,Pittsburgh,PA,15219,195,Flatbed,18000,2026-05-25,07:00,2026-05-26,950,open,,oversized?? confirm w/ shipper
+29372501,Camden,NJ,08103,Baltimore,MD,21201,115,Refrigerated,8500,2026-05-25,,2026-05-25,520,open,,temp controlled 34-38F
+29372515,New York,NY,10001,Boston,MA,02101,220,Box Truck,5200,2026-05-27,06:00,2026-05-28,875,open,,
+29000096,Philadelphia,PA,19103,Elizabeth,NJ,07201,75,Box Truck,18370,2026-03-12,07:00-14:00,2026-03-14,285,covered,Goodlane Internal,
+29000138,Camden,NJ,08103,Yonkers,NY,10701,206,Box Truck,15219,2026-05-15,09:00-12:00,2026-05-16,780,delivered,Iron Bridge Mfg,residential delivery
+29000196,Newark,NJ,07102,Brooklyn,NY,11201,126,Refrigerated,12263,2026-04-14,07:00-14:00,2026-04-16,505,delivered,Iron Bridge Mfg,call consignee 1hr before
+29000279,Harrisburg,PA,17101,Trenton,NJ,08619,200,Sprinter Van,19418,2026-03-25,07:00-14:00,2026-03-27,640,delivered,Republic Building Materials,temp controlled 35-40F
+29000392,Trenton,NJ,08619,Brooklyn,NY,11201,137,Flatbed,12454,2026-03-21,06:00,2026-03-22,525,delivered,Republic Building Materials,hazmat class 3 - verify carrier cert
+29000496,Wilmington,DE,19801,Newark,NJ,07102,102,Sprinter Van,21471,2026-05-11,07:00-14:00,2026-05-11,250,delivered,Northeast Distribution,
+29000614,Harrisburg,PA,17101,Dover,DE,19901,185,Box Truck,21977,2026-05-03,09:00-12:00,2026-05-04,745,covered,Cardinal Foods,
+29000660,Elizabeth,NJ,07201,York,PA,17401,189,Box Truck,,2026-03-18,08:00-17:00,2026-03-20,635,covered,,
+29000689,Allentown,PA,18101,Woodbridge,NJ,07095,138,Sprinter Van,17838,2026-04-02,10:00-15:00,2026-04-04,390,delivered,Iron Bridge Mfg,
+29000791,Dover,DE,19901,Cherry Hill,NJ,08002,151,Box Truck,,2026-04-03,,2026-04-05,455,delivered,Jumpstart Athletics,pallet jack required
+29000844,Rockville,MD,20850,Scranton,PA,18501,79,Sprinter Van,,2026-05-07,08:00,2026-05-07,220,cancelled,Coastal Imports LLC,
+29000873,Dover,DE,19901,Elizabeth,NJ,07201,101,Box Truck,3306,2026-05-02,09:00-12:00,2026-05-02,405,covered,Apex Manufacturing,dock hours 6am-3pm only
+29000948,Brooklyn,NY,11201,Worcester,MA,01601,195,Sprinter Van,,2026-05-09,07:00-10:00,2026-05-11,560,delivered,Cardinal Foods,2-man crew required
+29001048,Reading,PA,19601,Columbus,OH,43201,155,Flatbed,,2026-04-13,,2026-04-13,540,cancelled,Northeast Distribution,inside delivery required
+29001091,Pittsburgh,PA,15219,Camden,NJ,08103,48,Box Truck,,2026-03-31,06:00,2026-04-01,190,covered,Valley Wholesale Co,
+29001198,Dover,DE,19901,Jersey City,NJ,07302,246,Flatbed,,2026-04-25,morning,2026-04-26,1020,covered,Coastal Imports LLC,
+29001299,Pittsburgh,PA,15219,Cleveland,OH,44101,126,Box Truck,,2026-03-25,flexible,2026-03-25,495,covered,Apex Manufacturing,residential delivery
+29001337,Paterson,NJ,07501,Brooklyn,NY,11201,59,Flatbed,18533,2026-03-13,07:00-14:00,2026-03-13,250,covered,Jumpstart Athletics,temp controlled 35-40F
+29001373,Lancaster,PA,17601,Annapolis,MD,21401,142,Box Truck,,2026-03-01,flexible,2026-03-02,575,delivered,Cardinal Foods,residential delivery
+29001477,Paterson,NJ,07501,Allentown,PA,18101,95,Box Truck,18266,2026-03-08,07:00-14:00,2026-03-10,395,delivered,Goodlane Internal,inside delivery required
+29001553,Yonkers,NY,10701,Boston,MA,02101,170,Box Truck,,2026-05-16,morning,2026-05-16,495,delivered,Jumpstart Athletics,inside delivery required
+29001599,York,PA,17401,Philadelphia,PA,19103,147,Sprinter Van,10866,2026-04-03,06:00,2026-04-03,480,delivered,Cardinal Foods,2-man crew required
+29001630,Easton,PA,18045,Columbus,OH,43201,232,Box Truck,,2026-05-19,08:00-17:00,2026-05-21,955,delivered,Valley Wholesale Co,fragile cargo
+29001709,Newark,NJ,07102,Albany,NY,12201,102,Flatbed,,2026-05-09,08:00-12:00,2026-05-11,415,delivered,,pallet jack required
+29001791,Scranton,PA,18501,Elizabeth,NJ,07201,66,Refrigerated,,2026-03-15,09:00-12:00,2026-03-15,385,cancelled,Cardinal Foods,team driver required
+29001883,Cherry Hill,NJ,08002,Brooklyn,NY,11201,107,Flatbed,,2026-03-07,07:00,2026-03-07,465,covered,Goodlane Internal,
+29001940,Brooklyn,NY,11201,Elizabeth,NJ,07201,153,Box Truck,816,2026-03-15,,2026-03-15,545,delivered,Goodlane Internal,oversized - confirm with shipper
+29002029,Brooklyn,NY,11201,Worcester,MA,01601,118,Box Truck,1807,2026-04-15,10:00-15:00,2026-04-15,390,delivered,Jumpstart Athletics,oversized - confirm with shipper
+29002143,Buffalo,NY,14201,Springfield,MA,01101,100,Flatbed,6301,2026-04-22,07:00-10:00,2026-04-22,520,delivered,Mason Industries,residential delivery
+29002260,Bethlehem,PA,18015,Columbus,OH,43201,219,Box Truck,15923,2026-03-29,08:00,2026-03-29,645,covered,Cardinal Foods,temp controlled 35-40F
+29002303,Bethlehem,PA,18015,Woodbridge,NJ,07095,57,Box Truck,,2026-05-05,08:00,2026-05-06,235,covered,Goodlane Internal,
+29002351,York,PA,17401,Elizabeth,NJ,07201,192,Box Truck,10778,2026-04-25,08:00-17:00,2026-04-27,655,covered,Summit Retail Solutions,inside delivery required
+29002390,Camden,NJ,08103,Queens,NY,11101,173,Box Truck,22475,2026-03-26,08:00-17:00,2026-03-27,710,covered,Republic Building Materials,driver must have TWIC card
+29002484,Pittsburgh,PA,15219,Dover,DE,19901,210,Sprinter Van,10188,2026-05-10,morning,2026-05-10,600,delivered,Republic Building Materials,2-man crew required
+29002585,Newark,NJ,07102,York,PA,17401,143,Sprinter Van,,2026-04-06,08:00-12:00,2026-04-06,440,covered,Metro Supply Chain,pallet jack required
+29002641,Paterson,NJ,07501,Hartford,CT,06101,170,Flatbed,6060,2026-03-11,10:00-15:00,2026-03-12,730,covered,Republic Building Materials,no liftgate at destination
+29002698,Bethlehem,PA,18015,Elizabeth,NJ,07201,90,Box Truck,,2026-04-30,flexible,2026-05-02,270,delivered,Summit Retail Solutions,pallet jack required
+29002786,Woodbridge,NJ,07095,Buffalo,NY,14201,77,Box Truck,,2026-03-14,09:00-12:00,2026-03-15,285,delivered,,weekend pickup ok
+29002860,Scranton,PA,18501,Jersey City,NJ,07302,71,Refrigerated,22375,2026-05-07,08:00,2026-05-09,350,cancelled,,call consignee 1hr before
+29002953,Rockville,MD,20850,Scranton,PA,18501,180,Box Truck,,2026-04-30,06:00,2026-05-01,615,delivered,Republic Building Materials,hazmat class 3 - verify carrier cert

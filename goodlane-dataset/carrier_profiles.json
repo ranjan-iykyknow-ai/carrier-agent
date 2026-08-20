@@ -1,0 +1,1350 @@
+[
+  {
+    "mc_number": "776491",
+    "dot_number": "2273558",
+    "company_name": "SMR TRUCKING INC",
+    "primary_contact": "Rummy Singh",
+    "email": "rummy@smrtrucking.com",
+    "phone": null,
+    "address": "1600 Uhler Road, Easton, PA 18045",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-DE"
+    ],
+    "home_base_zip": "18045",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.2,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 1.2,
+    "insurance_expiry": "2027-03-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Responds quickly. Completed 29372289 (Reading-Wilmington) 5/20.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "538772",
+    "dot_number": "1188521",
+    "company_name": "CHAHAL TRUCKING INC",
+    "primary_contact": null,
+    "email": "chahaltrucking@gmail.com",
+    "phone": "(610) 438-0512",
+    "address": "Easton, PA 18045",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "PA-NJ"
+    ],
+    "home_base_zip": "18045",
+    "factoring_company": "Triumph Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.8,
+    "loads_completed_with_goodlane": 1,
+    "avg_response_time_hours": 0.5,
+    "insurance_expiry": "2026-11-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "1592228",
+    "dot_number": null,
+    "company_name": null,
+    "primary_contact": "John",
+    "email": "john.dispatchawl@gmail.com",
+    "phone": "423-823-0799",
+    "address": null,
+    "equipment_types": [],
+    "preferred_lanes": [],
+    "home_base_zip": null,
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 0.2,
+    "insurance_expiry": null,
+    "authority_status": "ACTIVE",
+    "safety_rating": null,
+    "notes": "New contact. Company name unknown. Communicates via WhatsApp.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "1480355",
+    "dot_number": null,
+    "company_name": "DEMIX TRANSPORT",
+    "primary_contact": "Lilly Morgan",
+    "email": "lilly@demixtransport.com",
+    "phone": null,
+    "address": null,
+    "equipment_types": [
+      "Sprinter Van",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "NJ-NY"
+    ],
+    "home_base_zip": null,
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.5,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 0.8,
+    "insurance_expiry": "2027-01-20",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Good communicator. CC adam@demixtransport.com on all correspondence.",
+    "onboarded": true
+  },
+  {
+    "mc_number": null,
+    "dot_number": null,
+    "company_name": "HKR LOGISTICS LLC",
+    "primary_contact": "Gagandeep Singh",
+    "email": "hkrlogisticsllc@gmail.com",
+    "phone": "484-541-2490",
+    "address": null,
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ"
+    ],
+    "home_base_zip": null,
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": null,
+    "insurance_expiry": null,
+    "authority_status": null,
+    "safety_rating": null,
+    "notes": "MC# not yet verified. Does not factor.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "68333",
+    "dot_number": "3084097",
+    "company_name": "G2 LOGISTICS INC",
+    "primary_contact": "Reed Barlus",
+    "email": "reed.g2transportation@gmail.com",
+    "phone": "(630) 415-2622 ext 207",
+    "address": "1615 S [unknown], IL",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "NJ-NY",
+      "PA-PA"
+    ],
+    "home_base_zip": null,
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.0,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 1.5,
+    "insurance_expiry": "2026-08-10",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Illinois-based but active in PA/NJ corridor",
+    "onboarded": false
+  },
+  {
+    "mc_number": "166960",
+    "dot_number": null,
+    "company_name": "LANDSTAR RANGER INC",
+    "primary_contact": "Marie Vale",
+    "email": "marie@bbkagent.com",
+    "phone": "(929) 279-1065 ext 370",
+    "address": "Brooklyn, NY",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "PA-NJ",
+      "NY-CT"
+    ],
+    "home_base_zip": "11201",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.7,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 2.1,
+    "insurance_expiry": "2027-06-01",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Marie is a Landstar agent (BBK Agency), not the carrier directly.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "1510341",
+    "dot_number": null,
+    "company_name": "HUSSEIN'S TRUCKING",
+    "primary_contact": "Marcus Duffy",
+    "email": "marcus.husseinstrucking@gmail.com",
+    "phone": null,
+    "address": null,
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ"
+    ],
+    "home_base_zip": null,
+    "factoring_company": null,
+    "payment_terms_preference": "unknown",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 0.3,
+    "insurance_expiry": null,
+    "authority_status": "ACTIVE",
+    "safety_rating": null,
+    "notes": "Asked about payment terms without providing factoring info. Follow up needed.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "945231",
+    "dot_number": "3412987",
+    "company_name": "Eagle Express LLC",
+    "primary_contact": "Dave Kowalski",
+    "email": "dispatch@eagleexpressllc.net",
+    "phone": "717-555-0142",
+    "address": "440 Commerce Dr, Harrisburg, PA 17101",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "PA-PA",
+      "PA-MD",
+      "PA-NJ"
+    ],
+    "home_base_zip": "17101",
+    "factoring_company": "OTR Solutions",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.8,
+    "loads_completed_with_goodlane": 7,
+    "avg_response_time_hours": 0.9,
+    "insurance_expiry": "2027-02-28",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Very reliable. Prefers flatbed but runs box truck when empty. Do not offer below $280 on short PA hauls.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "712843",
+    "dot_number": "2987341",
+    "company_name": "Blue Ridge Transport LLC",
+    "primary_contact": "Carlos Mendez",
+    "email": "cmendez@blueridgetransport.com",
+    "phone": "610-555-0093",
+    "address": "Bethlehem, PA 18015",
+    "equipment_types": [
+      "Sprinter Van",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "NJ-NY",
+      "PA-PA"
+    ],
+    "home_base_zip": "18015",
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.9,
+    "loads_completed_with_goodlane": 4,
+    "avg_response_time_hours": 1.1,
+    "insurance_expiry": "2026-05-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "INSURANCE EXPIRED - do not book until updated cert received.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "1023456",
+    "dot_number": "3198432",
+    "company_name": "Prime Horizon Logistics",
+    "primary_contact": "Anya Volkov",
+    "email": "anya@primehorizonlogistics.com",
+    "phone": "201-555-0178",
+    "address": "Newark, NJ 07102",
+    "equipment_types": [
+      "Box Truck",
+      "Refrigerated"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NJ-CT",
+      "NJ-MD"
+    ],
+    "home_base_zip": "07102",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.6,
+    "loads_completed_with_goodlane": 5,
+    "avg_response_time_hours": 1.7,
+    "insurance_expiry": "2027-04-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "One of few local reefer options. Rate floor ~$450 on NJ-NY.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "887642",
+    "dot_number": "3301234",
+    "company_name": "Sunrise Carriers Inc",
+    "primary_contact": "Tony Ferrara",
+    "email": "tony.ferrara@sunrisecarriers.com",
+    "phone": "215-555-0261",
+    "address": "Philadelphia, PA 19146",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-NY",
+      "PA-DE"
+    ],
+    "home_base_zip": "19146",
+    "factoring_company": "Triumph Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.1,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 2.3,
+    "insurance_expiry": "2026-12-01",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "1198743",
+    "dot_number": null,
+    "company_name": "Mountain State Transport",
+    "primary_contact": "Rob Galloway",
+    "email": "rob@mountainstatetransport.net",
+    "phone": "412-555-0344",
+    "address": "Pittsburgh, PA 15219",
+    "equipment_types": [
+      "Flatbed",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-PA",
+      "PA-OH"
+    ],
+    "home_base_zip": "15219",
+    "factoring_company": null,
+    "payment_terms_preference": "quick_pay",
+    "reliability_score": 3.5,
+    "loads_completed_with_goodlane": 1,
+    "avg_response_time_hours": 3.2,
+    "insurance_expiry": "2027-01-15",
+    "authority_status": "CONDITIONAL",
+    "safety_rating": "Conditional",
+    "notes": "CONDITIONAL authority - verify before booking any load.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "1345678",
+    "dot_number": "3456789",
+    "company_name": "Liberty Freight Solutions LLC",
+    "primary_contact": "Simone Archer",
+    "email": "simone@libertyfreightsolutions.com",
+    "phone": "856-555-0412",
+    "address": "Camden, NJ 08103",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "NJ-PA",
+      "NJ-MD",
+      "NJ-NY"
+    ],
+    "home_base_zip": "08103",
+    "factoring_company": "OTR Solutions",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.9,
+    "loads_completed_with_goodlane": 9,
+    "avg_response_time_hours": 0.6,
+    "insurance_expiry": "2027-03-01",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Most reliable carrier in NJ corridor. Preferred vendor.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "1123456",
+    "dot_number": "3234567",
+    "company_name": "Northeast Cargo LLC",
+    "primary_contact": "Wei Zhang",
+    "email": "wzhang@northeastcargo.com",
+    "phone": "212-555-0589",
+    "address": "New York, NY 10001",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NY-CT",
+      "NY-NJ",
+      "NY-MA"
+    ],
+    "home_base_zip": "10001",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.3,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 1.9,
+    "insurance_expiry": "2026-10-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Only runs NY metro and New England. Minimum $350 on any load.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "234891",
+    "dot_number": "1987234",
+    "company_name": "Keystone Freight LLC",
+    "primary_contact": "Mike Harrington",
+    "email": "dispatch@keystonefreightllc.com",
+    "phone": "215-555-0301",
+    "address": "Philadelphia, PA 19103",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-DE",
+      "PA-MD"
+    ],
+    "home_base_zip": "19103",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.4,
+    "loads_completed_with_goodlane": 6,
+    "avg_response_time_hours": 1.3,
+    "insurance_expiry": "2027-01-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Solid PA-area carrier. Prefers morning pickups.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "891234",
+    "dot_number": "2341567",
+    "company_name": "TRI-STAR TRANSPORT INC",
+    "primary_contact": "Ivan Sokolowski",
+    "email": "ivan.tristar@gmail.com",
+    "phone": "610-555-0412",
+    "address": "Bethlehem, PA 18015",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-NY"
+    ],
+    "home_base_zip": "18015",
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.7,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 2.1,
+    "insurance_expiry": "2027-05-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "345678",
+    "dot_number": "2876543",
+    "company_name": "Garden State Express LLC",
+    "primary_contact": "Patricia Ramos",
+    "email": "pramos@gardenstatexpress.com",
+    "phone": "856-555-0123",
+    "address": "Cherry Hill, NJ 08002",
+    "equipment_types": [
+      "Sprinter Van",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NJ-PA",
+      "NJ-DE"
+    ],
+    "home_base_zip": "08002",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.6,
+    "loads_completed_with_goodlane": 8,
+    "avg_response_time_hours": 0.7,
+    "insurance_expiry": "2027-08-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Very responsive. Preferred for NJ metro runs.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "567234",
+    "dot_number": null,
+    "company_name": "ATLANTIC CARRIERS INC",
+    "primary_contact": "Desmond Okafor",
+    "email": "desmond@atlanticcarriersinc.com",
+    "phone": "973-555-0654",
+    "address": "Newark, NJ 07102",
+    "equipment_types": [
+      "Box Truck",
+      "Refrigerated"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NJ-CT",
+      "NJ-MD"
+    ],
+    "home_base_zip": "07102",
+    "factoring_company": "Triumph Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.1,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 1.4,
+    "insurance_expiry": "2026-09-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "DOT# not yet confirmed.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "723891",
+    "dot_number": "3156789",
+    "company_name": "Ridgeline Transport LLC",
+    "primary_contact": "Shaun McIntyre",
+    "email": "shaun.ridgeline@gmail.com",
+    "phone": null,
+    "address": "York, PA 17401",
+    "equipment_types": [
+      "Flatbed",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-MD",
+      "PA-PA",
+      "PA-DE"
+    ],
+    "home_base_zip": "17401",
+    "factoring_company": null,
+    "payment_terms_preference": "quick_pay",
+    "reliability_score": 3.9,
+    "loads_completed_with_goodlane": 1,
+    "avg_response_time_hours": 3.0,
+    "insurance_expiry": "2027-02-28",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Slow responder. Good for flatbed when no one else available.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "456789",
+    "dot_number": "2654321",
+    "company_name": "VELOCITY FREIGHT INC",
+    "primary_contact": "Jason Tran",
+    "email": "jtran@velocityfreight.net",
+    "phone": "201-555-0789",
+    "address": "Jersey City, NJ 07302",
+    "equipment_types": [
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NY-CT"
+    ],
+    "home_base_zip": "07302",
+    "factoring_company": "OTR Solutions",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.8,
+    "loads_completed_with_goodlane": 11,
+    "avg_response_time_hours": 0.4,
+    "insurance_expiry": "2027-06-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Best sprinter option in NJ-NY corridor. Rate floor $175.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "678901",
+    "dot_number": "2901234",
+    "company_name": "Chesapeake Haulers LLC",
+    "primary_contact": "Robert Nguyen",
+    "email": "robert@chesapeakehaulers.com",
+    "phone": "410-555-0234",
+    "address": "Baltimore, MD 21201",
+    "equipment_types": [
+      "Box Truck",
+      "Refrigerated"
+    ],
+    "preferred_lanes": [
+      "MD-PA",
+      "MD-NJ"
+    ],
+    "home_base_zip": "21201",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.3,
+    "loads_completed_with_goodlane": 4,
+    "avg_response_time_hours": 1.8,
+    "insurance_expiry": "2027-03-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "789012",
+    "dot_number": null,
+    "company_name": "QUICK SHIFT LOGISTICS",
+    "primary_contact": "Amara Diallo",
+    "email": "amara.quickshift@gmail.com",
+    "phone": "718-555-0567",
+    "address": "Brooklyn, NY 11201",
+    "equipment_types": [
+      "Sprinter Van",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NY-NJ",
+      "NY-CT",
+      "NY-PA"
+    ],
+    "home_base_zip": "11201",
+    "factoring_company": "TCI Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.6,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 0.9,
+    "insurance_expiry": "2026-08-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Insurance expiry coming up - follow up in July.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "901234",
+    "dot_number": "3278901",
+    "company_name": "Penn Valley Transport LLC",
+    "primary_contact": "Luis Estrada",
+    "email": "luis@pennvalleytransport.com",
+    "phone": "215-555-0678",
+    "address": "Philadelphia, PA 19146",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-DE",
+      "PA-MD"
+    ],
+    "home_base_zip": "19146",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.5,
+    "loads_completed_with_goodlane": 7,
+    "avg_response_time_hours": 1.1,
+    "insurance_expiry": "2027-04-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "234567",
+    "dot_number": "2543219",
+    "company_name": "IRON HORSE FREIGHT LLC",
+    "primary_contact": "Dale Buchanan",
+    "email": "dale.ironhorse@yahoo.com",
+    "phone": "412-555-0345",
+    "address": "Pittsburgh, PA 15219",
+    "equipment_types": [
+      "Flatbed",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-OH",
+      "PA-PA"
+    ],
+    "home_base_zip": "15219",
+    "factoring_company": "Porter Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.0,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 2.2,
+    "insurance_expiry": "2027-07-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Western PA specialist. Rate floor $300 on flatbed.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "345891",
+    "dot_number": "3109876",
+    "company_name": "Coastal Express Transport LLC",
+    "primary_contact": "Angela Kim",
+    "email": "akim@coastalexpresstransport.com",
+    "phone": null,
+    "address": "Elizabeth, NJ 07201",
+    "equipment_types": [
+      "Refrigerated"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NJ-CT",
+      "NJ-MD"
+    ],
+    "home_base_zip": "07201",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.7,
+    "loads_completed_with_goodlane": 5,
+    "avg_response_time_hours": 1.6,
+    "insurance_expiry": "2027-01-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Best reefer option in NJ besides Prime Horizon. Temp logs provided.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "456012",
+    "dot_number": "2789456",
+    "company_name": "SUMMIT RIDGE CARRIERS INC",
+    "primary_contact": "Frank Kowalczyk",
+    "email": "frank.summitridge@gmail.com",
+    "phone": "570-555-0456",
+    "address": "Scranton, PA 18501",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-NY",
+      "PA-PA"
+    ],
+    "home_base_zip": "18501",
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.8,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 2.8,
+    "insurance_expiry": "2026-11-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "NEPA area. Slow responder.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "567123",
+    "dot_number": "2890567",
+    "company_name": "Metro Delivery Solutions LLC",
+    "primary_contact": "Vincent Caruso",
+    "email": "vcaruso@metrodeliverysolutions.com",
+    "phone": "212-555-0901",
+    "address": "New York, NY 10001",
+    "equipment_types": [
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "NY-NJ",
+      "NY-CT",
+      "NY-PA"
+    ],
+    "home_base_zip": "10001",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.2,
+    "loads_completed_with_goodlane": 4,
+    "avg_response_time_hours": 1.0,
+    "insurance_expiry": "2027-05-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "NYC metro only. Minimum $200 on any load.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "678234",
+    "dot_number": null,
+    "company_name": null,
+    "primary_contact": "Mohammed Al-Rashid",
+    "email": "mohammed.dispatch99@gmail.com",
+    "phone": "908-555-0654",
+    "address": null,
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NJ-PA",
+      "NJ-NY"
+    ],
+    "home_base_zip": null,
+    "factoring_company": "Apex Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 0.3,
+    "insurance_expiry": null,
+    "authority_status": "ACTIVE",
+    "safety_rating": null,
+    "notes": "Company name not confirmed. Very fast responder. MC# verified, DOT not on file.",
+    "onboarded": false
+  },
+  {
+    "mc_number": null,
+    "dot_number": null,
+    "company_name": "BLUE EAGLE LOGISTICS",
+    "primary_contact": "Tariq Hassan",
+    "email": "tariq.blueeagle@gmail.com",
+    "phone": "267-555-0789",
+    "address": "Philadelphia, PA 19103",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-DE"
+    ],
+    "home_base_zip": "19103",
+    "factoring_company": null,
+    "payment_terms_preference": "unknown",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": null,
+    "insurance_expiry": null,
+    "authority_status": null,
+    "safety_rating": null,
+    "notes": "MC# not yet provided. Do not book until verified.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "321654",
+    "dot_number": "2765432",
+    "company_name": "Route One Transport Inc",
+    "primary_contact": "Sandra Pellegrino",
+    "email": "sandra@routeonetransport.com",
+    "phone": "856-555-0901",
+    "address": "Woodbridge, NJ 07095",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "NJ-PA",
+      "NJ-NY",
+      "NJ-MD"
+    ],
+    "home_base_zip": "07095",
+    "factoring_company": "OTR Solutions",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.4,
+    "loads_completed_with_goodlane": 5,
+    "avg_response_time_hours": 1.2,
+    "insurance_expiry": "2027-09-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "543210",
+    "dot_number": "3012345",
+    "company_name": "HORIZON LINE CARRIERS LLC",
+    "primary_contact": "Kevin Doherty",
+    "email": "kdoherty@horizonlinecarriers.com",
+    "phone": "203-555-0123",
+    "address": "Bridgeport, CT 06601",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "CT-NY",
+      "CT-NJ",
+      "CT-MA"
+    ],
+    "home_base_zip": "06601",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.1,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 1.9,
+    "insurance_expiry": "2027-02-28",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "CT/New England specialist.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "765432",
+    "dot_number": "3198765",
+    "company_name": "Valley Run Freight LLC",
+    "primary_contact": "Hector Morales",
+    "email": "hector.valleyrun@gmail.com",
+    "phone": "717-555-0234",
+    "address": "Lancaster, PA 17601",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-DE",
+      "PA-MD"
+    ],
+    "home_base_zip": "17601",
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.5,
+    "loads_completed_with_goodlane": 1,
+    "avg_response_time_hours": 2.4,
+    "insurance_expiry": "2027-06-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "876543",
+    "dot_number": null,
+    "company_name": "Capital City Transport",
+    "primary_contact": "Diane Worthington",
+    "email": "diane@capitalcitytransport.net",
+    "phone": "301-555-0345",
+    "address": "Rockville, MD 20850",
+    "equipment_types": [
+      "Refrigerated",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "MD-PA",
+      "MD-NJ",
+      "MD-VA"
+    ],
+    "home_base_zip": "20850",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.6,
+    "loads_completed_with_goodlane": 6,
+    "avg_response_time_hours": 1.5,
+    "insurance_expiry": "2027-08-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Strong reefer option south of PA. CC billing@capitalcitytransport.net on invoices.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "987654",
+    "dot_number": "3276543",
+    "company_name": "CLEARVIEW HAULING INC",
+    "primary_contact": "Thomas Pietrzak",
+    "email": "thomas.clearview@gmail.com",
+    "phone": "484-555-0456",
+    "address": "Allentown, PA 18101",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-PA",
+      "PA-NY"
+    ],
+    "home_base_zip": "18101",
+    "factoring_company": "Triumph Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.0,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 1.7,
+    "insurance_expiry": "2026-12-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "109876",
+    "dot_number": "3354321",
+    "company_name": "Sharp Arrow Logistics LLC",
+    "primary_contact": "Nkechi Adeyemi",
+    "email": "nkechi@sharparrowlogistics.com",
+    "phone": "201-555-0567",
+    "address": "Paterson, NJ 07501",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NJ-PA",
+      "NJ-CT"
+    ],
+    "home_base_zip": "07501",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": 4.5,
+    "loads_completed_with_goodlane": 7,
+    "avg_response_time_hours": 0.8,
+    "insurance_expiry": "2027-07-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Reliable NJ carrier. Good for flatbed corridor work.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "219876",
+    "dot_number": null,
+    "company_name": "TRADEWIND TRANSPORT INC",
+    "primary_contact": "Baraka Mwangi",
+    "email": "baraka.tradewind@gmail.com",
+    "phone": null,
+    "address": "Queens, NY 11101",
+    "equipment_types": [
+      "Sprinter Van",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NY-NJ",
+      "NY-CT"
+    ],
+    "home_base_zip": "11101",
+    "factoring_company": "TCI Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.4,
+    "loads_completed_with_goodlane": 1,
+    "avg_response_time_hours": 1.3,
+    "insurance_expiry": "2026-07-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "INSURANCE NEARING EXPIRY. Do not book past July without updated cert.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "330987",
+    "dot_number": "3412098",
+    "company_name": "Birch Hill Carriers LLC",
+    "primary_contact": "Colleen Fitzgerald",
+    "email": "colleen@birchhillcarriers.com",
+    "phone": "413-555-0678",
+    "address": "Springfield, MA 01101",
+    "equipment_types": [
+      "Box Truck",
+      "Refrigerated"
+    ],
+    "preferred_lanes": [
+      "MA-CT",
+      "MA-NY",
+      "MA-NH"
+    ],
+    "home_base_zip": "01101",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.2,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 2.0,
+    "insurance_expiry": "2027-10-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "New England specialist. Rarely goes below Hartford.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "441098",
+    "dot_number": "3523209",
+    "company_name": "LAKESIDE FREIGHT LLC",
+    "primary_contact": "Omar Washington",
+    "email": "omar@lakesidefreight.net",
+    "phone": "216-555-0789",
+    "address": "Cleveland, OH 44101",
+    "equipment_types": [
+      "Flatbed",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "OH-PA",
+      "OH-PA",
+      "PA-OH"
+    ],
+    "home_base_zip": "44101",
+    "factoring_company": "Porter Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.1,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 2.6,
+    "insurance_expiry": "2027-04-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Ohio-based. Good for PA-OH corridor flatbed work.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "552109",
+    "dot_number": null,
+    "company_name": "Premier Road Transport",
+    "primary_contact": "Adriana Castillo",
+    "email": "adriana.premier@gmail.com",
+    "phone": "973-555-0890",
+    "address": "Elizabeth, NJ 07201",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NJ-PA"
+    ],
+    "home_base_zip": "07201",
+    "factoring_company": null,
+    "payment_terms_preference": "direct",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 0.6,
+    "insurance_expiry": "2027-03-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": null,
+    "notes": "New contact. Fast responder. Safety rating not yet on file.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "663210",
+    "dot_number": "3634320",
+    "company_name": "CROSSROADS TRANSPORT INC",
+    "primary_contact": "Gene Palumbo",
+    "email": "gene@crossroadstransport.net",
+    "phone": "215-555-0012",
+    "address": "Philadelphia, PA 19103",
+    "equipment_types": [
+      "Box Truck",
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-MD",
+      "PA-DE"
+    ],
+    "home_base_zip": "19103",
+    "factoring_company": "RTS Financial",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.3,
+    "loads_completed_with_goodlane": 5,
+    "avg_response_time_hours": 1.4,
+    "insurance_expiry": "2027-11-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "774321",
+    "dot_number": "3745431",
+    "company_name": "Northbound Express LLC",
+    "primary_contact": "Priyanka Mehta",
+    "email": "pmehta@northboundexpress.com",
+    "phone": "201-555-0234",
+    "address": "Jersey City, NJ 07302",
+    "equipment_types": [
+      "Sprinter Van",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NJ-NY",
+      "NY-CT",
+      "NJ-CT"
+    ],
+    "home_base_zip": "07302",
+    "factoring_company": "OTR Solutions",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.6,
+    "loads_completed_with_goodlane": 9,
+    "avg_response_time_hours": 0.5,
+    "insurance_expiry": "2027-12-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Top sprinter van option in NJ-NY. High volume, good communication.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "885432",
+    "dot_number": null,
+    "company_name": "FRONTIER HAULING LLC",
+    "primary_contact": "Clint Beauregard",
+    "email": "clint.frontier@gmail.com",
+    "phone": "724-555-0345",
+    "address": "Pittsburgh, PA 15219",
+    "equipment_types": [
+      "Flatbed"
+    ],
+    "preferred_lanes": [
+      "PA-OH",
+      "PA-WV",
+      "PA-PA"
+    ],
+    "home_base_zip": "15219",
+    "factoring_company": null,
+    "payment_terms_preference": "quick_pay",
+    "reliability_score": 3.8,
+    "loads_completed_with_goodlane": 1,
+    "avg_response_time_hours": 3.5,
+    "insurance_expiry": "2027-01-31",
+    "authority_status": "CONDITIONAL",
+    "safety_rating": "Conditional",
+    "notes": "CONDITIONAL authority. Verify with FMCSA before every booking.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "996543",
+    "dot_number": "3856542",
+    "company_name": "Red Oak Freight Solutions",
+    "primary_contact": "Fatima Diarra",
+    "email": "fatima@redoakfreight.com",
+    "phone": "302-555-0456",
+    "address": "Wilmington, DE 19801",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "DE-PA",
+      "DE-NJ",
+      "DE-MD"
+    ],
+    "home_base_zip": "19801",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.4,
+    "loads_completed_with_goodlane": 4,
+    "avg_response_time_hours": 1.1,
+    "insurance_expiry": "2027-06-30",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Good DE-area carrier. Good for return runs from Wilmington.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "107654",
+    "dot_number": null,
+    "company_name": "PINNACLE FREIGHT INC",
+    "primary_contact": "Raj Patel",
+    "email": "raj.pinnaclefreight@gmail.com",
+    "phone": "908-555-0567",
+    "address": "Woodbridge, NJ 07095",
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "NJ-PA",
+      "NJ-NY",
+      "NJ-DE"
+    ],
+    "home_base_zip": "07095",
+    "factoring_company": "Apex Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 3.9,
+    "loads_completed_with_goodlane": 2,
+    "avg_response_time_hours": 1.6,
+    "insurance_expiry": "2027-09-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  },
+  {
+    "mc_number": "218765",
+    "dot_number": "3967653",
+    "company_name": "Tidewater Carriers Inc",
+    "primary_contact": "William Osei",
+    "email": "wosei@tidewatercarriers.com",
+    "phone": "410-555-0678",
+    "address": "Annapolis, MD 21401",
+    "equipment_types": [
+      "Refrigerated",
+      "Box Truck"
+    ],
+    "preferred_lanes": [
+      "MD-PA",
+      "MD-NJ",
+      "MD-VA"
+    ],
+    "home_base_zip": "21401",
+    "factoring_company": null,
+    "payment_terms_preference": "standard",
+    "reliability_score": 4.5,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 1.9,
+    "insurance_expiry": "2027-05-31",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": "Good reefer option for MD/VA runs.",
+    "onboarded": true
+  },
+  {
+    "mc_number": "329876",
+    "dot_number": null,
+    "company_name": null,
+    "primary_contact": "Benny",
+    "email": "bennytrucks88@hotmail.com",
+    "phone": "610-555-0789",
+    "address": null,
+    "equipment_types": [
+      "Box Truck"
+    ],
+    "preferred_lanes": [],
+    "home_base_zip": null,
+    "factoring_company": null,
+    "payment_terms_preference": "unknown",
+    "reliability_score": null,
+    "loads_completed_with_goodlane": 0,
+    "avg_response_time_hours": 0.2,
+    "insurance_expiry": null,
+    "authority_status": null,
+    "safety_rating": null,
+    "notes": "Unknown carrier. Reached out cold. No company name, no MC#, no insurance on file. Do not book.",
+    "onboarded": false
+  },
+  {
+    "mc_number": "440987",
+    "dot_number": "4078764",
+    "company_name": "SWIFT LANE TRANSPORT LLC",
+    "primary_contact": "Denise Johansson",
+    "email": "denise@swiftlanetransport.com",
+    "phone": "215-555-0890",
+    "address": "Philadelphia, PA 19146",
+    "equipment_types": [
+      "Box Truck",
+      "Sprinter Van"
+    ],
+    "preferred_lanes": [
+      "PA-NJ",
+      "PA-DE",
+      "PA-NY"
+    ],
+    "home_base_zip": "19146",
+    "factoring_company": "Triumph Business Capital",
+    "payment_terms_preference": "factored",
+    "reliability_score": 4.1,
+    "loads_completed_with_goodlane": 3,
+    "avg_response_time_hours": 1.3,
+    "insurance_expiry": "2027-03-15",
+    "authority_status": "ACTIVE",
+    "safety_rating": "Satisfactory",
+    "notes": null,
+    "onboarded": true
+  }
+]
