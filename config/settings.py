@@ -30,7 +30,13 @@ INSTALLED_APPS = [
     "apps.inquiries",
     "apps.candidates",
     "apps.workspace",
+    "apps.accounts",
+    "apps.dashboard",
 ]
+
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -56,6 +62,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.dashboard.context.shell",
             ],
         },
     },
@@ -83,6 +90,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # whitenoise emits a warning at startup if the directory does not exist yet
 STATIC_ROOT.mkdir(exist_ok=True)
@@ -124,6 +132,10 @@ OPENAI_MODEL_EXTRACTION = env("OPENAI_MODEL_EXTRACTION", default="gpt-5.6-luna")
 OPENAI_REASONING_EFFORT_EXTRACTION = env("OPENAI_REASONING_EFFORT_EXTRACTION", default="low")
 DEEPGRAM_MODEL = env("DEEPGRAM_MODEL", default="nova-3")
 DEEPGRAM_API_KEY = env("DEEPGRAM_API_KEY", default=None)
+LANGFUSE_BASE_URL = env("LANGFUSE_BASE_URL", default=None)
+LANGFUSE_PUBLIC_KEY = env("LANGFUSE_PUBLIC_KEY", default=None)
+LANGFUSE_SECRET_KEY = env("LANGFUSE_SECRET_KEY", default=None)
+LANGFUSE_CAPTURE_PAYLOADS = env.bool("LANGFUSE_CAPTURE_PAYLOADS", default=True)
 PROVIDER_TIMEOUT_SECONDS = env.int("PROVIDER_TIMEOUT_SECONDS", default=60)
 
 # --- Seed and ingestion limits ---

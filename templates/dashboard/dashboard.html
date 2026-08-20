@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Goodlane Carrier Agent{% endblock %}
+{% block page_title %}Operations Dashboard{% endblock %}
+{% block content %}
+{% if not snapshot %}
+<div class="card border-amber-200 bg-amber-50 text-amber-800">
+  No active dataset snapshot. Run <span class="font-mono">make seed</span> to import the Goodlane dataset.
+</div>
+{% else %}
+<div class="grid gap-4">
+
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+    <div class="card">
+      <div class="card-title mb-1">Open loads</div>
+      <div class="font-display text-2xl font-bold">{{ load_counts.open|default:0 }}</div>
+      <div class="text-xs text-slate-500">need coverage</div>
+    </div>
+    <div class="card">
+      <div class="card-title mb-1">Covered</div>
+      <div class="font-display text-2xl font-bold">{{ load_counts.covered|default:0 }}</div>
+      <div class="text-xs text-slate-500">carrier assigned</div>
+    </div>
+    <div class="card">
+      <div class="card-title mb-1">Delivered</div>
+      <div class="font-display text-2xl font-bold">{{ load_counts.delivered|default:0 }}</div>
+      <div class="text-xs text-slate-500">completed</div>
+    </div>
+    <div class="card">
+      <div class="card-title mb-1">Cancelled</div>
+      <div class="font-display text-2xl font-bold">{{ load_counts.cancelled|default:0 }}</div>
+      <div class="text-xs text-slate-500">closed</div>
+    </div>
+    <div class="card border-l-4 border-l-amber-400">
+      <div class="card-title mb-1">Needs review</div>
+      <div class="font-display text-2xl font-bold">{{ review_count }}</div>
+      <div class="text-xs text-slate-500">inquiries awaiting a human</div>
+    </div>
+    <div class="card border-l-4 border-l-red-400">
+      <div class="card-title mb-1">Compliance warnings</div>
+      <div class="font-display text-2xl font-bold">{{ compliance_warnings }}</div>
+      <div class="text-xs text-slate-500">blocked or conditional carriers</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Open loads</div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr>
+            <th class="th">Load</th><th class="th">Route</th><th class="th">Equipment</th>
+            <th class="th">Pickup</th><th class="th text-right">Offered</th>
+            <th class="th text-right">$/mi</th><th class="th text-right">Inquiries</th><th class="th">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in open_loads %}
+          <tr class="hover:bg-slate-50">
+            <td class="td font-mono text-brand-600">{{ row.load.external_load_id }}</td>
+            <td class="td">{{ row.load.origin_city }}, {{ row.load.origin_state }} → {{ row.load.destination_city }}, {{ row.load.destination_state }}
+              {% if row.load.distance_miles %}<span class="text-slate-400">· {{ row.load.distance_miles }} mi</span>{% endif %}</td>
+            <td class="td">{{ row.load.equipment_type.display_name|default:row.load.equipment_type_raw }}</td>
+            <td class="td font-mono text-xs">{{ row.load.pickup_date|date:"M j" }}{% if row.load.pickup_window_raw %} · {{ row.load.pickup_window_raw }}{% endif %}</td>
+            <td class="td text-right font-mono">{% if row.load.offered_rate_usd %}${{ row.load.offered_rate_usd|floatformat:0 }}{% else %}—{% endif %}</td>
+            <td class="td text-right font-mono">{{ row.per_mile|default:"—" }}</td>
+            <td class="td text-right">{{ row.load.inquiry_count }}</td>
+            <td class="td"><span class="chip chip-dot {{ row.band_class }}">{{ row.band_label }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td class="td text-slate-400" colspan="8">No open loads.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      AI operations
+      {% if ai.langfuse_url %}<a class="float-right font-sans text-xs font-semibold normal-case tracking-normal text-brand-600 hover:underline" href="{{ ai.langfuse_url }}" target="_blank" rel="noopener">Open in Langfuse ↗</a>{% endif %}
+    </div>
+    <div class="grid grid-cols-2 gap-x-6 md:grid-cols-3 xl:grid-cols-5">
+      {% include "dashboard/_metric.html" with label="Total inputs" value=ai.total_inputs %}
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Success rate</div>
+        <div class="font-mono font-semibold">{% if ai.success_rate is not None %}{{ ai.success_rate|floatformat:1 }}%{% else %}<span class="italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      {% include "dashboard/_metric.html" with label="Needs review" value=ai.review_count %}
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Avg latency</div>
+        <div class="font-mono font-semibold">{% if ai.avg_latency_ms is not None %}{{ ai.avg_latency_ms|floatformat:0 }} ms{% else %}<span class="italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">p95 latency</div>
+        <div class="font-mono font-semibold">{% if ai.p95_latency_ms is not None %}{{ ai.p95_latency_ms }} ms{% else %}<span class="italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total AI cost</div>
+        <div class="font-mono font-semibold">{% if ai.total_cost is not None %}${{ ai.total_cost|floatformat:4 }}{% else %}<span class="italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Cost / inquiry</div>
+        <div class="font-mono font-semibold">{% if ai.cost_per_inquiry is not None %}${{ ai.cost_per_inquiry }}{% else %}<span class="italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Latest eval score</div>
+        <div class="font-mono font-semibold">{% if ai.latest_eval %}{{ ai.latest_eval.aggregate_metrics.score|default:"—" }}{% else %}<span class="italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Prompt version</div>
+        <div class="font-mono text-xs font-semibold">{% if ai.prompt_versions %}{{ ai.prompt_versions|join:", " }}{% else %}<span class="font-sans italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+      <div class="border-b border-slate-100 py-2">
+        <div class="font-display text-[11px] font-semibold uppercase tracking-wider text-slate-400">Last evaluation</div>
+        <div class="font-mono font-semibold">{% if ai.latest_eval %}{{ ai.latest_eval.completed_at|date:"M j, H:i" }}{% else %}<span class="font-sans italic text-slate-400">unavailable</span>{% endif %}</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endif %}
+{% endblock %}

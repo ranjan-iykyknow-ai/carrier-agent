@@ -187,6 +187,7 @@ def _ensure_extraction(job, generation, extractor, transcript) -> ExtractionRun:
 
     document = _build_document(event, transcript)
     raw_output, _operation = extractor.extract(prompt, document)
+    raw_output = _strip_nul(raw_output)
 
     try:
         parse_extraction(raw_output)
@@ -227,6 +228,17 @@ def _ensure_extraction(job, generation, extractor, transcript) -> ExtractionRun:
             "The extraction did not match the versioned schema.",
         )
     return run
+
+
+def _strip_nul(value):
+    """PostgreSQL JSONB cannot store \\u0000; models occasionally emit it."""
+    if isinstance(value, str):
+        return value.replace("\x00", "")
+    if isinstance(value, dict):
+        return {key: _strip_nul(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_strip_nul(item) for item in value]
+    return value
 
 
 def _build_document(event, transcript) -> dict:

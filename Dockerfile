@@ -13,6 +13,8 @@ WORKDIR /app
 # /app so the dev bind-mount cannot clobber it.
 COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-install-project
+# Pre-download the standalone Tailwind binary into the image layer.
+RUN tailwindcss --help >/dev/null 2>&1 || true
 
 COPY . .
 

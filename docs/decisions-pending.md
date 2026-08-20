@@ -39,6 +39,27 @@ When we get there you'll need to create the Railway project with PostgreSQL, Red
 and a Storage Bucket — or hand me a Railway API token and I drive it via CLI.
 No action needed yet.
 
+## 6. App layout vs spec 3J (needs your call)
+
+I implemented the domain apps as `freight / comms / aiops / inquiries / candidates /
+workspace` before reading 3J, which prescribes `common / accounts / dashboard /
+freight / ingestion / inquiries / assistant / evaluation` (with `candidates` folded
+into `inquiries` and per-file model packages). Domain **boundaries** match; names
+and file layout differ. New apps (accounts, dashboard, …) follow the spec names.
+
+**Decision needed:** conform the existing app names/layout to 3J with a mechanical
+rename (safe now — nothing is deployed; migrations regenerate cleanly), or accept
+the current names and record the deviation? I lean toward conforming before the
+deploy phase.
+
+## 7. Full dataset processed live overnight
+
+After the pipeline passed its live provider-contract tests and a 2-job real E2E,
+I dispatched all remaining 327 seeded jobs through the worker with real OpenAI +
+Deepgram calls (disclosed cost estimate ≈ $1). Results and per-status counts are
+in the morning summary; failed jobs (if any) are visible and retryable via
+`retry_failed_jobs`.
+
 ## Defaults I chose overnight (flag if you disagree)
 
 - `Load.status` choices = the dataset vocabulary: `open`, `covered`, `delivered`,
