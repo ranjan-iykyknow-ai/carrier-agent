@@ -42,10 +42,10 @@ LANGFUSE_BASE_URL=<from your .env>
 LANGFUSE_PUBLIC_KEY=<from your .env>
 LANGFUSE_SECRET_KEY=<from your .env>
 LANGFUSE_CAPTURE_PAYLOADS=true
-BROKER_PASSWORD=<your chosen broker login password>
+BROKER_PASSWORD=<your chosen broker login password>   # DEMO_USER_PASSWORD works too
 ```
 
-`BROKER_PASSWORD` is authoritative: every deploy runs `ensure_broker` and
+`BROKER_PASSWORD` (alias: `DEMO_USER_PASSWORD`) is authoritative: every deploy runs `ensure_broker` and
 aligns `broker@goodlanelogistics.com` to it (rotate by changing the variable
 and redeploying). Nothing is written to disk.
 

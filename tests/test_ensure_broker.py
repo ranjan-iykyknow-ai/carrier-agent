@@ -91,3 +91,13 @@ class TestEnvPassword:
         assert User.objects.count() == 1
         assert User.objects.get().check_password("steady")
         assert "up to date" in output
+
+    def test_demo_user_password_alias_is_accepted(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("BROKER_PASSWORD", raising=False)
+        monkeypatch.setenv("DEMO_USER_PASSWORD", "dashboard-choice")
+
+        run(tmp_path=tmp_path)
+
+        user = User.objects.get(username="broker@goodlanelogistics.com")
+        assert user.check_password("dashboard-choice")
+        assert not (tmp_path / "pw.txt").exists()
