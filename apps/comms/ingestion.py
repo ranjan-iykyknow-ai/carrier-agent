@@ -77,6 +77,9 @@ class SubmitCallCommand:
     submitted_by: str
     duration_seconds: float | None = None
     sample_rate: int | None = None
+    # Trusted adapters (seed) may prepare a content-addressed object themselves;
+    # manual submissions never set this — the service writes the private object.
+    storage_key: str | None = None
     external_source_id: str | None = None
     dataset_snapshot_id: uuid.UUID | None = None
     import_batch_id: uuid.UUID | None = None
@@ -178,8 +181,13 @@ class IngestionSubmissionService:
             occurred_at = None  # dataset calls carry no reliable source time
 
         # Private-object preparation happens outside the transaction; the
-        # original filename never controls the storage key.
-        storage_key = default_storage.save(f"calls/{event_id}.wav", ContentFile(command.content))
+        # original filename never controls the storage key. A trusted adapter
+        # may have prepared a content-addressed object already; compensation
+        # deletes only objects this service wrote itself.
+        service_wrote_object = command.storage_key is None
+        storage_key = command.storage_key or default_storage.save(
+            f"calls/{event_id}.wav", ContentFile(command.content)
+        )
         try:
             with transaction.atomic():
                 event = CommunicationEvent.objects.create(
@@ -211,13 +219,15 @@ class IngestionSubmissionService:
                 )
                 job = self._create_job(event, command, fingerprint, received_at)
         except IntegrityError:
-            default_storage.delete(storage_key)
+            if service_wrote_object:
+                default_storage.delete(storage_key)
             existing = self._find_existing(fingerprint)
             if existing:
                 return self._existing_result(existing)
             raise
         except Exception:
-            default_storage.delete(storage_key)
+            if service_wrote_object:
+                default_storage.delete(storage_key)
             raise
 
         return self._created_result(event, job)
@@ -239,6 +249,8 @@ class IngestionSubmissionService:
                 problems.append("dataset_snapshot_id")
             if command.dispatch_mode != "immediate":
                 problems.append("dispatch_mode")
+            if getattr(command, "storage_key", None) is not None:
+                problems.append("storage_key")
             if problems:
                 raise SubmissionInvariantError(
                     f"manual submissions cannot set trusted context: {', '.join(problems)}"

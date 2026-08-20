@@ -216,7 +216,8 @@ class Carrier(TimeStampedModel):
     mc_number_normalized = models.CharField(max_length=50, null=True, blank=True)
     dot_number_raw = models.CharField(max_length=50, null=True, blank=True)
     dot_number_normalized = models.CharField(max_length=50, null=True, blank=True)
-    company_name = models.CharField(max_length=200)
+    # An unknown carrier name is business data (3 dataset rows), never an error.
+    company_name = models.CharField(max_length=200, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
     home_base_zip = models.CharField(max_length=10, null=True, blank=True)
     factoring_company = models.CharField(max_length=200, null=True, blank=True)
