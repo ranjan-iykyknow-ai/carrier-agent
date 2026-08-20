@@ -11,6 +11,7 @@ from apps.aiops.models import (
     EvaluationRun,
 )
 from apps.candidates.models import (
+    CandidateInquiry,
     CarrierLoadCandidate,
     ComplianceAssessment,
     EligibilityAssessment,
@@ -246,6 +247,16 @@ def make_candidate(carrier=None, load=None, **kwargs) -> CarrierLoadCandidate:
     }
     defaults.update(kwargs)
     return CarrierLoadCandidate.objects.create(carrier=carrier, load=load, **defaults)
+
+
+def make_candidate_inquiry(candidate=None, inquiry=None, **kwargs) -> CandidateInquiry:
+    candidate = candidate or make_candidate()
+    inquiry = inquiry or make_inquiry(
+        event=make_communication_event(snapshot=candidate.load.dataset_snapshot)
+    )
+    defaults = {"relationship": CandidateInquiry.Relationship.SUPPORTING}
+    defaults.update(kwargs)
+    return CandidateInquiry.objects.create(candidate=candidate, inquiry=inquiry, **defaults)
 
 
 def make_compliance_assessment(candidate=None, **kwargs) -> ComplianceAssessment:
