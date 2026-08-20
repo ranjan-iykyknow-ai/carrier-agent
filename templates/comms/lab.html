@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Manual Ingestion Lab — Goodlane Carrier Agent{% endblock %}
+{% block page_title %}Manual Ingestion Lab{% endblock %}
+{% block content %}
+<div class="grid gap-4">
+
+  {% if not snapshot %}
+  <div class="card border-amber-200 bg-amber-50 text-amber-800">
+    No active dataset snapshot. Run <span class="font-mono">make seed</span> first — manual submissions need the demo business context.
+  </div>
+  {% else %}
+  <div class="card py-2.5 text-slate-600">
+    Anything submitted here goes through the <b>same pipeline</b> as the preloaded dataset — fingerprinting, transcription, extraction, entity resolution, deterministic validation, and review.
+    Business time uses the demo clock: <b>{{ demo_date|date:"M j, Y" }}</b>. Nothing here sends an email or contacts a carrier.
+  </div>
+  {% endif %}
+
+  <div class="grid items-start gap-4 xl:grid-cols-2">
+
+    <div class="card">
+      <div class="card-title">Paste a carrier email</div>
+      <form method="post" action="{% url 'lab_email_submit' %}" class="grid gap-2">
+        {% csrf_token %}
+        {% if email_form.errors %}
+        <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          {% for field, errors in email_form.errors.items %}<div><b>{{ field }}</b>: {{ errors|join:" " }}</div>{% endfor %}
+        </div>
+        {% endif %}
+        <div class="grid gap-2 md:grid-cols-2">
+          <input type="text" name="sender_name" value="{{ email_form.sender_name.value|default:'' }}" maxlength="255" placeholder="Sender name (optional)"
+                 class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+          <input type="email" name="sender_email" value="{{ email_form.sender_email.value|default:'' }}" maxlength="320" required placeholder="sender@carrier.com"
+                 class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+        </div>
+        <input type="text" name="subject" value="{{ email_form.subject.value|default:'' }}" maxlength="998" placeholder="Subject (optional)"
+               class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+        <textarea name="body" rows="8" maxlength="{{ max_body }}" required placeholder="Paste the email body…"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-mono text-[13px]">{{ email_form.body.value|default:'' }}</textarea>
+        <div class="grid gap-2 md:grid-cols-2">
+          <input type="text" name="suspected_load_reference" value="{{ email_form.suspected_load_reference.value|default:'' }}" maxlength="64" placeholder="Suspected load ID (hint, optional)"
+                 class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-mono text-sm">
+          <input type="text" name="suspected_carrier_identity" value="{{ email_form.suspected_carrier_identity.value|default:'' }}" maxlength="255" placeholder="Suspected carrier (hint, optional)"
+                 class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm">
+        </div>
+        <div class="text-[11px] text-slate-400">Hints are untrusted entity-resolution signals — they can propose a match but never verify one.</div>
+        <div class="flex gap-2">
+          <button type="button" class="btn"
+                  hx-post="{% url 'lab_email_preview' %}" hx-include="closest form" hx-target="#email-preview" hx-swap="innerHTML"
+                  {% if not snapshot %}disabled{% endif %}>Preview</button>
+          <button type="submit" class="btn btn-primary flex-1" hx-disabled-elt="this" {% if not snapshot %}disabled{% endif %}>Submit for processing</button>
+        </div>
+      </form>
+      <div id="email-preview"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Upload a call recording</div>
+      <form method="post" action="{% url 'lab_audio_submit' %}" enctype="multipart/form-data" class="grid gap-2">
+        {% csrf_token %}
+        {% if audio_form.errors %}
+        <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          {% for field, errors in audio_form.errors.items %}<div>{{ errors|join:" " }}</div>{% endfor %}
+        </div>
+        {% endif %}
+        <label class="grid cursor-pointer place-items-center gap-1 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center hover:border-brand-400">
+          <span class="font-display font-semibold">Choose a .wav file</span>
+          <span class="text-xs text-slate-400">PCM WAV · up to {{ max_wav_mb }} MB · up to {{ max_wav_seconds }} seconds</span>
+          <input type="file" name="audio_file" accept=".wav,audio/wav,audio/x-wav" required class="text-xs"
+                 onchange="document.getElementById('wav-preview').src = URL.createObjectURL(this.files[0]); document.getElementById('wav-preview').classList.remove('hidden')">
+        </label>
+        <audio id="wav-preview" controls class="hidden w-full"></audio>
+        <div class="text-[11px] text-slate-400">The browser preview is a convenience only — the server independently validates the RIFF/PCM content before accepting it.</div>
+        <button type="submit" class="btn btn-primary" hx-disabled-elt="this" {% if not snapshot %}disabled{% endif %}>Process Call</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -24,5 +24,6 @@ def shell(request):
             ("Dashboard", reverse("dashboard")),
             ("Inbox", reverse("inbox")),
             ("Loads", reverse("loads")),
+            ("Ingestion Lab", reverse("lab")),
         ],
     }

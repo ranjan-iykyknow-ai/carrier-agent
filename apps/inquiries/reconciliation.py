@@ -137,8 +137,9 @@ def _reconcile_one(event, extraction_run, sequence: int, item: InquiryProposal) 
         _assess_field(inquiry, grounder, "conditions", item.conditions, item.conditions_evidence)
 
     _persist_quotes(inquiry, grounder, item, reasons)
-    carrier = _match_carrier(inquiry, snapshot, item, reasons, event=event)
-    load = _match_load(inquiry, snapshot, item, reasons)
+    job = extraction_run.ingestion_job
+    carrier = _match_carrier(inquiry, snapshot, item, reasons, event=event, job=job)
+    load = _match_load(inquiry, snapshot, item, reasons, job=job)
     _compare_untrusted_metadata(event, inquiry, item, reasons)
     _flag_low_confidence_evidence(inquiry, grounder, item, reasons)
 
@@ -303,7 +304,7 @@ def _assess_rate_field(inquiry, item, carrier_positions):
 
 
 def _match_carrier(
-    inquiry, snapshot, item: InquiryProposal, reasons, *, event=None
+    inquiry, snapshot, item: InquiryProposal, reasons, *, event=None, job=None
 ) -> Carrier | None:
     exact: dict = {}  # carrier_id -> (carrier, method)
 
@@ -376,27 +377,39 @@ def _match_carrier(
         return None
 
     # No exact signal: weak name similarity proposes review candidates only.
-    name = (item.carrier_name or "").strip().casefold()
+    # A manual hint contributes exactly like an extracted name — a weak,
+    # clearly-labelled proposal that can never verify a match (spec 3A.3).
+    names = []
+    if item.carrier_name and item.carrier_name.strip():
+        names.append((item.carrier_name.strip().casefold(), "name_similarity"))
+    hint = (getattr(job, "suspected_carrier_identity_raw", None) or "").strip().casefold()
+    if hint:
+        names.append((hint, "manual_hint"))
     weak_found = False
-    if name:
-        scored = []
+    if names:
+        scored: dict = {}  # carrier_id -> (ratio, carrier, sources)
         for carrier in Carrier.objects.filter(dataset_snapshot=snapshot).exclude(
             company_name__isnull=True
         ):
             company = carrier.company_name.casefold()
-            ratio = difflib.SequenceMatcher(None, name, company).ratio()
-            # Containment counts: "Blue Ridge" inside "Blue Ridge Transport LLC".
-            if name in company or company in name:
-                ratio = max(ratio, 0.75)
-            if ratio >= settings.WEAK_NAME_SIMILARITY_THRESHOLD:
-                scored.append((ratio, carrier))
-        for _, carrier in sorted(scored, key=lambda pair: -pair[0])[:3]:
+            for name, source in names:
+                ratio = difflib.SequenceMatcher(None, name, company).ratio()
+                # Containment counts: "Blue Ridge" inside "Blue Ridge Transport LLC".
+                if name in company or company in name:
+                    ratio = max(ratio, 0.75)
+                if ratio >= settings.WEAK_NAME_SIMILARITY_THRESHOLD:
+                    best, _, sources = scored.get(carrier.id, (0, carrier, set()))
+                    sources = sources | {source}
+                    scored[carrier.id] = (max(best, ratio), carrier, sources)
+        ranked = sorted(scored.values(), key=lambda entry: -entry[0])[:3]
+        for _, carrier, sources in ranked:
             weak_found = True
             InquiryCarrierMatch.objects.create(
                 inquiry=inquiry,
                 carrier=carrier,
                 match_tier="weak",
                 primary_method="name_similarity",
+                signal_codes=sorted(sources),
             )
     if weak_found:
         reasons.append(
@@ -411,7 +424,8 @@ def _match_carrier(
     return None
 
 
-def _match_load(inquiry, snapshot, item: InquiryProposal, reasons) -> Load | None:
+def _match_load(inquiry, snapshot, item: InquiryProposal, reasons, *, job=None) -> Load | None:
+    hint_reference = _digits(getattr(job, "suspected_load_reference_raw", None) or "")
     reference = _digits(item.load_reference)
     if reference:
         load = Load.objects.filter(dataset_snapshot=snapshot, external_load_id=reference).first()
@@ -428,6 +442,16 @@ def _match_load(inquiry, snapshot, item: InquiryProposal, reasons) -> Load | Non
             inquiry.load = load
             inquiry.load_resolution_status = Inquiry.ResolutionStatus.VERIFIED
             inquiry.save(update_fields=["load", "load_resolution_status", "updated_at"])
+            if hint_reference and hint_reference != reference:
+                # A hint that diverges from verified evidence never overrides
+                # it; it earns a controlled review reason instead (spec 3A.3).
+                reasons.append(
+                    (
+                        "conflicting_load_reference",
+                        "review",
+                        "the manual hint diverges from the verified load reference",
+                    )
+                )
             return load
     if item.load_reference:
         # A stated reference (numeric or descriptive) that resolves to nothing
@@ -437,6 +461,27 @@ def _match_load(inquiry, snapshot, item: InquiryProposal, reasons) -> Load | Non
                 "ambiguous_load_reference",
                 "review",
                 "the stated load reference matches nothing in the active snapshot",
+            )
+        )
+    elif hint_reference:
+        # No reference in the content, but the submitting human proposed one:
+        # surface it as an unverified proposal for the broker to confirm.
+        hinted = Load.objects.filter(
+            dataset_snapshot=snapshot, external_load_id=hint_reference
+        ).first()
+        if hinted is not None:
+            InquiryLoadMatch.objects.create(
+                inquiry=inquiry,
+                load=hinted,
+                match_tier="weak",
+                primary_method="corrected_reference",
+                signal_codes=["manual_hint"],
+            )
+        reasons.append(
+            (
+                "ambiguous_load_reference",
+                "review",
+                "a manual hint proposes a load the content itself never references",
             )
         )
     # No reference at all (a cold availability announcement) stays visibly

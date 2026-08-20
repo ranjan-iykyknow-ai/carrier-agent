@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Ingestion job — Goodlane Carrier Agent{% endblock %}
+{% block page_title %}Ingestion job{% endblock %}
+{% block content %}
+<div class="grid gap-4">
+
+  {% if existing %}
+  <div class="card border-brand-200 bg-brand-50 text-brand-900">
+    This {{ event.channel }} was already ingested — showing the existing durable job. No duplicate records were created and no provider cost was repeated.
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="inline-flex h-6 w-6 items-center justify-center rounded border border-slate-200 bg-slate-100 text-xs font-bold text-slate-500">{% if event.channel == "email" %}✉{% else %}☎{% endif %}</span>
+      <h2 class="font-display text-base font-bold tracking-tight">
+        {% if email %}{{ email.sender_name|default:email.sender_email_raw }} — {{ email.subject|default:"(no subject)"|truncatechars:60 }}
+        {% elif recording %}{{ recording.original_filename }}
+        {% else %}{{ event.stable_evidence_id }}{% endif %}
+      </h2>
+    </div>
+    <div class="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[11px] text-slate-400">
+      <span>evidence {{ event.stable_evidence_id }}</span>
+      <span>correlation {{ job.correlation_id }}</span>
+      <span>submitted {{ job.submitted_at|date:"M j · H:i:s" }}</span>
+      {% if event.occurred_at %}<span>business time {{ event.occurred_at|date:"M j, Y · H:i" }}</span>{% endif %}
+    </div>
+  </div>
+
+  {% include "comms/_job_status.html" %}
+
+</div>
+{% endblock %}

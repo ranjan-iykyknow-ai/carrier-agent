@@ -1,6 +1,8 @@
+import re
+
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -114,12 +116,45 @@ def inbox(request):
     )
 
 
+_RANGE = re.compile(r"^bytes=(\d*)-(\d*)$")
+
+
 @login_required
 def call_audio(request, pk):
-    """Authenticated streaming of raw call evidence for review playback."""
+    """Authenticated streaming of raw call evidence for review playback.
+
+    Supports bounded single-range requests so the HTML audio player can seek;
+    storage keys and credentials never reach the client.
+    """
     recording = get_object_or_404(CallRecording, pk=pk)
     try:
         stream = default_storage.open(recording.storage_key, "rb")
     except FileNotFoundError:
         raise Http404 from None
-    return FileResponse(stream, content_type=recording.mime_type or "audio/wav")
+    content_type = recording.mime_type or "audio/wav"
+
+    range_match = _RANGE.match(request.headers.get("Range", ""))
+    if range_match and (range_match.group(1) or range_match.group(2)):
+        size = default_storage.size(recording.storage_key)
+        start = int(range_match.group(1)) if range_match.group(1) else None
+        end = int(range_match.group(2)) if range_match.group(2) else None
+        if start is None:  # suffix form: bytes=-N (final N bytes)
+            start, end = max(0, size - (end or 0)), size - 1
+        elif end is None or end >= size:
+            end = size - 1
+        if start <= end < size:
+            stream.seek(start)
+            body = stream.read(end - start + 1)
+            stream.close()
+            response = HttpResponse(body, status=206, content_type=content_type)
+            response["Content-Range"] = f"bytes {start}-{end}/{size}"
+            response["Accept-Ranges"] = "bytes"
+            return response
+        stream.close()
+        response = HttpResponse(status=416)
+        response["Content-Range"] = f"bytes */{size}"
+        return response
+
+    response = FileResponse(stream, content_type=content_type)
+    response["Accept-Ranges"] = "bytes"
+    return response
