@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.utils import timezone
 
+from apps.aiops import observability
 from apps.aiops.models import AIOperation, AIProviderCall
 from apps.aiops.prompts import PromptInfo, fallback_prompt
 
@@ -107,17 +108,37 @@ class OpenAIExtractor:
         return self._client
 
     def resolve_prompt(self, channel: str) -> PromptInfo:
-        # Langfuse-labelled prompt and last-known-good cache land with 3I;
-        # until then the bundled fallback is the resolved identity.
-        return fallback_prompt(channel)
+        """Langfuse `production` label first (its SDK cache covers transient
+        outages), then the bundled emergency fallback (spec 3I)."""
+        fallback = fallback_prompt(channel)
+        lf = observability.client()
+        if lf is None:
+            return fallback
+        try:
+            resolved = lf.get_prompt(fallback.name, label="production", cache_ttl_seconds=300)
+        except Exception:
+            logger.warning("prompt %s resolved from the bundled fallback", fallback.name)
+            return fallback
+        if getattr(resolved, "is_fallback", False):
+            return fallback
+        text = getattr(resolved, "prompt", None)
+        if not isinstance(text, str) or not text.strip():
+            return fallback
+        return PromptInfo(
+            name=fallback.name,
+            version=str(resolved.version),
+            source="langfuse",
+            text=text,
+        )
 
-    def extract(self, prompt: PromptInfo, document: dict):
+    def extract(self, prompt: PromptInfo, document: dict, *, correlation_id=None, trace_seed=None):
         from apps.comms.pipeline import PipelineError
         from apps.inquiries.extraction_schema import ExtractionProposal
 
         operation = AIOperation.objects.create(
             operation_type=AIOperation.OperationType.EXTRACTION,
             usage_category=AIOperation.UsageCategory.INGESTION,
+            correlation_id=correlation_id,
             started_at=timezone.now(),
         )
         response_format = {
@@ -135,6 +156,17 @@ class OpenAIExtractor:
 
         last_failure = None
         for attempt in range(1, TRANSIENT_ATTEMPTS + 1):
+            recorder = observability.start_generation(
+                trace_seed=trace_seed or f"operation:{operation.id}",
+                name=f"extraction:{prompt.name}",
+                model=self.model,
+                input=document,
+                metadata={
+                    "prompt_version": prompt.version,
+                    "prompt_source": prompt.source,
+                    "attempt": attempt,
+                },
+            )
             call = AIProviderCall.objects.create(
                 operation=operation,
                 sequence=attempt,
@@ -144,6 +176,8 @@ class OpenAIExtractor:
                 prompt_name=prompt.name,
                 prompt_version=prompt.version,
                 prompt_source=prompt.source,
+                langfuse_trace_id=recorder.trace_id,
+                langfuse_observation_id=recorder.observation_id,
                 attempt_number=attempt,
                 started_at=timezone.now(),
                 pricing_version=PRICING_VERSION,
@@ -152,6 +186,7 @@ class OpenAIExtractor:
             try:
                 raw, usage = self._request(messages, response_format)
             except ProviderFailure as failure:
+                recorder.finish(error=failure.code)
                 self._finish_call(call, status="failed", error_code=failure.code)
                 last_failure = failure
                 if failure.transient and attempt < TRANSIENT_ATTEMPTS:
@@ -163,6 +198,11 @@ class OpenAIExtractor:
             prompt_tokens = usage.get("prompt_tokens")
             completion_tokens = usage.get("completion_tokens")
             cost = _openai_cost(self.model, prompt_tokens or 0, completion_tokens or 0)
+            recorder.finish(
+                output=raw,
+                usage={"input": prompt_tokens or 0, "output": completion_tokens or 0},
+                cost=cost,
+            )
             self._finish_call(
                 call,
                 status="completed",
@@ -277,12 +317,13 @@ class DeepgramTranscriber:
             self._http = httpx.Client(timeout=settings.PROVIDER_TIMEOUT_SECONDS)
         return self._http
 
-    def transcribe(self, recording):
+    def transcribe(self, recording, *, correlation_id=None, trace_seed=None):
         from apps.comms.pipeline import PipelineError
 
         operation = AIOperation.objects.create(
             operation_type=AIOperation.OperationType.TRANSCRIPTION,
             usage_category=AIOperation.UsageCategory.INGESTION,
+            correlation_id=correlation_id,
             started_at=timezone.now(),
         )
         with default_storage.open(recording.storage_key, "rb") as stored:
@@ -294,12 +335,20 @@ class DeepgramTranscriber:
         }
         last_failure = None
         for attempt in range(1, TRANSIENT_ATTEMPTS + 1):
+            recorder = observability.start_generation(
+                trace_seed=trace_seed or f"operation:{operation.id}",
+                name="transcription",
+                model=self.model,
+                metadata={"attempt": attempt, **self.requested_options},
+            )
             call = AIProviderCall.objects.create(
                 operation=operation,
                 sequence=attempt,
                 provider=AIProviderCall.Provider.DEEPGRAM,
                 operation_name="transcription",
                 model=self.model,
+                langfuse_trace_id=recorder.trace_id,
+                langfuse_observation_id=recorder.observation_id,
                 attempt_number=attempt,
                 started_at=timezone.now(),
                 audio_seconds=recording.duration_seconds,
@@ -309,6 +358,7 @@ class DeepgramTranscriber:
             try:
                 payload = self._request(audio, params, recording.mime_type)
             except ProviderFailure as failure:
+                recorder.finish(error=failure.code)
                 self._finish(call, operation, status="failed", error_code=failure.code)
                 last_failure = failure
                 if failure.transient and attempt < TRANSIENT_ATTEMPTS:
@@ -316,8 +366,17 @@ class DeepgramTranscriber:
                 raise PipelineError(
                     failure.code, failure.summary, transient=failure.transient
                 ) from failure
-            result = self._parse(payload)
+            try:
+                result = self._parse(payload)
+            except PipelineError as exc:
+                recorder.finish(error=exc.code)
+                raise
             cost = _deepgram_cost(self.model, result["_duration"])
+            recorder.finish(
+                output=result.get("normalized_text"),
+                usage={"audio_seconds": int(result["_duration"] or 0)},
+                cost=cost,
+            )
             call.audio_seconds = result["_duration"]
             self._finish(call, operation, status="completed", estimated_cost=cost)
             operation.audio_seconds = result["_duration"]

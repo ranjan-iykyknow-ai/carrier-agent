@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from apps.aiops import observability
 from apps.comms.models import IngestionJob
 from apps.freight.models import Carrier, Load
 from apps.inquiries.models import Inquiry
@@ -137,6 +138,15 @@ def inquiry_review(request, pk):
     reasons = list(inquiry.review_reasons.order_by("created_at"))
     for reason in reasons:
         reason.hint = REASON_HINTS.get(reason.code, "")
+
+    trace_id = None
+    if inquiry.current_extraction and inquiry.current_extraction.ai_operation_id:
+        traced = (
+            inquiry.current_extraction.ai_operation.provider_calls.exclude(langfuse_trace_id=None)
+            .order_by("-sequence")
+            .first()
+        )
+        trace_id = traced.langfuse_trace_id if traced else None
     carrier_q = request.GET.get("carrier_q", "").strip()
     carrier_results = []
     if carrier_q:
@@ -187,6 +197,7 @@ def inquiry_review(request, pk):
             "job": IngestionJob.objects.filter(communication_event=event).first(),
             "carrier_q": carrier_q,
             "carrier_results": carrier_results,
+            "trace_url": observability.trace_url(trace_id),
             "error": request.GET.get("error", ""),
             "questions": inquiry.questions.all(),
             "intents": inquiry.intents.order_by("-is_primary"),

@@ -40,7 +40,7 @@ class StubExtractor:
     def resolve_prompt(self, channel):
         return self.prompt
 
-    def extract(self, prompt, document):
+    def extract(self, prompt, document, **kwargs):
         self.calls += 1
         if self.error:
             raise self.error
@@ -68,7 +68,7 @@ class StubTranscriber:
         default_factory=lambda: {"smart_format": True, "utterances": True}
     )
 
-    def transcribe(self, recording):
+    def transcribe(self, recording, **kwargs):
         self.calls += 1
         if self.error:
             raise self.error
