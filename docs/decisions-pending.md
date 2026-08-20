@@ -52,13 +52,17 @@ rename (safe now — nothing is deployed; migrations regenerate cleanly), or acc
 the current names and record the deviation? I lean toward conforming before the
 deploy phase.
 
-## 7. Full dataset processed live overnight
+## 7. Full dataset processed live overnight (twice)
 
 After the pipeline passed its live provider-contract tests and a 2-job real E2E,
-I dispatched all remaining 327 seeded jobs through the worker with real OpenAI +
-Deepgram calls (disclosed cost estimate ≈ $1). Results and per-status counts are
-in the morning summary; failed jobs (if any) are visible and retryable via
-`retry_failed_jobs`.
+I processed all 329 seeded jobs with real OpenAI + Deepgram calls. The first full
+run (232 completed / 95 needs_review / 2 failed, $0.45) surfaced three real
+issues — envelope-sender identity matching, a NUL character in one model output,
+and no-load-reference availability emails flooding review — all fixed with tests.
+I then wiped and reseeded for a clean demo state. Final run: **268 completed /
+61 needs_review / 0 failed**, ≈ $0.45. Total provider spend ≈ $0.90, within the
+disclosed ~$1 estimate. The local app at http://localhost:8000 is fully populated
+(`var/dev-password.txt` holds your local login for broker@goodlanelogistics.com).
 
 ## Defaults I chose overnight (flag if you disagree)
 

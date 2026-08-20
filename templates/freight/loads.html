@@ -14,7 +14,7 @@
       </thead>
       <tbody>
         {% for load in loads %}
-        <tr class="hover:bg-slate-50">
+        <tr class="cursor-pointer hover:bg-slate-50" onclick="window.location='{% url 'load_workspace' load.external_load_id %}'">
           <td class="td font-mono"><a class="text-brand-600 hover:underline" href="{% url 'load_workspace' load.external_load_id %}">{{ load.external_load_id }}</a></td>
           <td class="td">
             {% if load.status == "open" %}<span class="chip chip-ok chip-dot">Open</span>

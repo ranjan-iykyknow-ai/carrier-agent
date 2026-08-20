@@ -3,11 +3,18 @@ from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from apps.candidates.models import CarrierLoadCandidate
-from apps.candidates.selectors import best_rates, market_context, offered_per_mile
-from apps.freight.models import DatasetSnapshot, Load
+from apps.candidates.policy import assess_authority, assess_safety
+from apps.candidates.selectors import (
+    best_rates,
+    market_context,
+    offered_per_mile,
+    quote_as_per_mile,
+    strongest_candidates,
+)
+from apps.freight.models import Carrier, DatasetSnapshot, Load
 from apps.inquiries.models import Inquiry
 
 STATUS_CHIPS = {
@@ -84,6 +91,16 @@ def load_workspace(request, external_load_id):
     per_mile = offered_per_mile(load)
     rates = best_rates(load)
 
+    # Eligible candidates lead in their deterministic strongest-first order;
+    # everyone else follows grouped by how actionable their status is.
+    STATUS_RANK = {
+        "eligible": 0,
+        "needs_clarification": 1,
+        "needs_compliance_review": 2,
+        "needs_onboarding": 3,
+        "blocked": 4,
+    }
+    strongest_order = {c.id: index for index, c in enumerate(strongest_candidates(load))}
     candidates = []
     for candidate in (
         CarrierLoadCandidate.objects.filter(load=load)
@@ -97,26 +114,34 @@ def load_workspace(request, external_load_id):
         assessment = candidate.current_eligibility_assessment
         label, chip = ("Unknown", "chip-muted")
         reasons = []
+        status = None
         if assessment:
-            label, chip = STATUS_CHIPS.get(
-                assessment.final_status, (assessment.final_status, "chip-muted")
-            )
+            status = assessment.final_status
+            label, chip = STATUS_CHIPS.get(status, (status, "chip-muted"))
             reasons = [
                 reason
                 for reason in assessment.reasons.all()
                 if reason.severity in ("blocker", "review")
             ]
+        quote = candidate.current_quote
         candidates.append(
             {
                 "candidate": candidate,
                 "carrier": candidate.carrier,
-                "quote": candidate.current_quote,
+                "quote": quote,
+                "quote_per_mile": quote_as_per_mile(quote, load) if quote else None,
                 "status_label": label,
                 "status_chip": chip,
                 "reasons": reasons,
+                "_rank": (
+                    STATUS_RANK.get(status, 5),
+                    strongest_order.get(candidate.id, len(strongest_order)),
+                    candidate.current_quote is None,
+                    str(candidate.carrier_id),
+                ),
             }
         )
-    candidates.sort(key=lambda row: (row["quote"] is None, str(row["carrier"].id)))
+    candidates.sort(key=lambda row: row["_rank"])
 
     unmatched = (
         Inquiry.objects.filter(load=load, carrier__isnull=True)
@@ -143,5 +168,126 @@ def load_workspace(request, external_load_id):
             "candidates": candidates,
             "unmatched": unmatched,
             "timeline": timeline,
+        },
+    )
+
+
+POLICY_CHIPS = {
+    "pass": ("chip-ok", "meets policy"),
+    "fail": ("chip-danger", "fails policy"),
+    "unknown": ("chip-warn", "needs review"),
+}
+
+
+@login_required
+def carrier_profile(request, pk):
+    carrier = get_object_or_404(
+        Carrier.objects.select_related("dataset_snapshot").prefetch_related(
+            "contacts", "equipment__equipment_type", "preferred_lanes__lane"
+        ),
+        pk=pk,
+    )
+    as_of = carrier.dataset_snapshot.as_of_at.date()
+
+    def policy_row(label, raw, result, detail=""):
+        chip, verdict = POLICY_CHIPS[result]
+        return {"label": label, "raw": raw, "chip": chip, "verdict": verdict, "detail": detail}
+
+    insurance_expired = carrier.insurance_expiry is not None and carrier.insurance_expiry < as_of
+    compliance = [
+        policy_row(
+            "Authority", carrier.authority_status, assess_authority(carrier.authority_status)
+        ),
+        policy_row("Safety rating", carrier.safety_rating, assess_safety(carrier.safety_rating)),
+        {
+            # Insurance policy compares against each load's pickup date; the
+            # profile only situates the expiry against the demo clock.
+            "label": "Insurance",
+            "raw": carrier.insurance_expiry,
+            "chip": "chip-danger"
+            if insurance_expired
+            else ("chip-warn" if carrier.insurance_expiry is None else "chip-ok"),
+            "verdict": "expired"
+            if insurance_expired
+            else ("unknown" if carrier.insurance_expiry is None else "valid"),
+            "detail": f"as of {as_of}" if carrier.insurance_expiry else "",
+        },
+        {
+            "label": "Onboarding",
+            "raw": {True: "onboarded", False: "not onboarded", None: None}[carrier.onboarded],
+            "chip": {True: "chip-ok", False: "chip-warn", None: "chip-warn"}[carrier.onboarded],
+            "verdict": {True: "complete", False: "required", None: "unknown"}[carrier.onboarded],
+            "detail": "",
+        },
+    ]
+
+    gaps = []
+    if not carrier.mc_number_raw:
+        gaps.append("No MC number on file — identity cannot be verified deterministically.")
+    if not carrier.dot_number_raw:
+        gaps.append("No DOT number on file.")
+    if carrier.insurance_expiry is None:
+        gaps.append("Insurance expiry unknown.")
+    if assess_authority(carrier.authority_status) == "unknown":
+        gaps.append("Authority status is unrecognized or missing; policy treats it as unknown.")
+    if assess_safety(carrier.safety_rating) == "unknown":
+        gaps.append("Safety rating is unrecognized or missing.")
+    if carrier.onboarded is None:
+        gaps.append("Onboarding state unknown.")
+    if not carrier.company_name:
+        gaps.append("Company name missing from the dataset.")
+
+    candidacies = []
+    for candidate in (
+        CarrierLoadCandidate.objects.filter(carrier=carrier)
+        .select_related("load__equipment_type", "current_quote", "current_eligibility_assessment")
+        .prefetch_related("current_eligibility_assessment__reasons")
+        .order_by("load__pickup_date")
+    ):
+        assessment = candidate.current_eligibility_assessment
+        label, chip = ("Unknown", "chip-muted")
+        reasons = []
+        if assessment:
+            label, chip = STATUS_CHIPS.get(
+                assessment.final_status, (assessment.final_status, "chip-muted")
+            )
+            reasons = [
+                reason
+                for reason in assessment.reasons.all()
+                if reason.severity in ("blocker", "review")
+            ]
+        candidacies.append(
+            {
+                "candidate": candidate,
+                "load": candidate.load,
+                "quote": candidate.current_quote,
+                "status_label": label,
+                "status_chip": chip,
+                "reasons": reasons,
+            }
+        )
+
+    history = (
+        Inquiry.objects.filter(carrier=carrier)
+        .select_related("communication_event__email_content", "load")
+        .prefetch_related("quotes")
+        .order_by("-communication_event__occurred_at", "-communication_event__received_at")
+    )
+
+    return render(
+        request,
+        "freight/carrier_profile.html",
+        {
+            "carrier": carrier,
+            "primary_contact": next(
+                (c for c in carrier.contacts.all() if c.is_primary),
+                carrier.contacts.all()[0] if carrier.contacts.all() else None,
+            ),
+            "contacts": carrier.contacts.all(),
+            "compliance": compliance,
+            "gaps": gaps,
+            "candidacies": candidacies,
+            "history": history,
+            "as_of": as_of,
         },
     )

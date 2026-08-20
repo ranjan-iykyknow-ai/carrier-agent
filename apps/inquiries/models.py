@@ -386,6 +386,8 @@ class InquiryCarrierMatch(TimeStampedModel):
         PHONE = "phone"
         MULTI_SIGNAL = "multi_signal"
         NAME_SIMILARITY = "name_similarity"
+        # A broker picked this carrier with no prior deterministic signal.
+        BROKER_CONFIRMED = "broker_confirmed"
 
     class Status(models.TextChoices):
         PROPOSED = "proposed"

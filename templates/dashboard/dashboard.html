@@ -55,7 +55,7 @@
         </thead>
         <tbody>
           {% for row in open_loads %}
-          <tr class="hover:bg-slate-50">
+          <tr class="cursor-pointer hover:bg-slate-50" onclick="window.location='{% url 'load_workspace' row.load.external_load_id %}'">
             <td class="td font-mono"><a class="text-brand-600 hover:underline" href="{% url 'load_workspace' row.load.external_load_id %}">{{ row.load.external_load_id }}</a></td>
             <td class="td">{{ row.load.origin_city }}, {{ row.load.origin_state }} → {{ row.load.destination_city }}, {{ row.load.destination_state }}
               {% if row.load.distance_miles %}<span class="text-slate-400">· {{ row.load.distance_miles }} mi</span>{% endif %}</td>

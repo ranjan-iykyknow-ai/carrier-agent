@@ -29,6 +29,9 @@
     {% endif %}
   </div>
 
+  <div class="grid items-start gap-4 xl:grid-cols-[1fr_400px]">
+  <div class="grid gap-4">
+
   <div class="card">
     <div class="card-title">Market context
       {% if market %}<span class="float-right font-mono text-[11px] font-medium normal-case tracking-normal text-slate-400">{{ load.lane }} · {{ load.equipment_type.display_name }} · week of {{ market.history.week_start|date:"M j" }} · {{ market.history.load_volume }} load{{ market.history.load_volume|pluralize }}</span>{% endif %}
@@ -78,25 +81,30 @@
   </div>
 
   <div class="card">
-    <div class="card-title">Carrier candidates · {{ candidates|length }}</div>
+    <div class="card-title">Carrier candidates · {{ candidates|length }}
+      <span class="float-right font-sans text-[10px] font-medium normal-case tracking-normal text-slate-400">strongest eligible first — deterministic ordering, no opaque score</span>
+    </div>
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
           <tr>
             <th class="th">Carrier</th><th class="th text-right">Quote</th>
+            <th class="th text-right">$/mi</th>
             <th class="th">Status</th><th class="th">Why</th>
           </tr>
         </thead>
         <tbody>
           {% for row in candidates %}
-          <tr class="hover:bg-slate-50">
+          <tr class="cursor-pointer hover:bg-slate-50" onclick="window.location='{% url 'carrier_profile' row.carrier.pk %}'">
             <td class="td">
-              <div class="font-semibold">{{ row.carrier.company_name|default:"(unnamed carrier)" }}</div>
-              <div class="font-mono text-xs text-slate-400">{% if row.carrier.mc_number_raw %}MC {{ row.carrier.mc_number_raw }}{% else %}no MC on file{% endif %}</div>
+              <a href="{% url 'carrier_profile' row.carrier.pk %}" class="font-semibold text-slate-900 hover:text-brand-600">{{ row.carrier.company_name|default:"(unnamed carrier)" }}</a>
+              <div class="font-mono text-xs text-slate-400">{% if row.carrier.mc_number_raw %}MC {{ row.carrier.mc_number_raw }}{% else %}no MC on file{% endif %}
+                {% if row.carrier.reliability_score is not None %}· ★ {{ row.carrier.reliability_score }}{% endif %}</div>
             </td>
             <td class="td text-right font-mono">
-              {% if row.quote %}${{ row.quote.amount|floatformat:0 }} {{ row.quote.rate_basis|cut:"_" }}{% else %}<span class="text-slate-300">—</span>{% endif %}
+              {% if row.quote %}${{ row.quote.amount|floatformat:0 }} <span class="text-xs text-slate-400">{{ row.quote.rate_basis|cut:"_" }}</span>{% else %}<span class="text-slate-300">—</span>{% endif %}
             </td>
+            <td class="td text-right font-mono text-xs">{% if row.quote_per_mile %}{{ row.quote_per_mile }}{% else %}<span class="text-slate-300">—</span>{% endif %}</td>
             <td class="td"><span class="chip chip-dot {{ row.status_chip }}">{{ row.status_label }}</span></td>
             <td class="td">
               {% for reason in row.reasons %}
@@ -105,41 +113,49 @@
             </td>
           </tr>
           {% empty %}
-          <tr><td class="td text-slate-400" colspan="4">No resolved carrier candidates yet.</td></tr>
+          <tr><td class="td text-slate-400" colspan="5">No resolved carrier candidates yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    {% if unmatched %}
-    <div class="mt-3 border-t border-slate-100 pt-3">
-      <div class="mb-1 font-display text-xs font-bold uppercase tracking-wider text-amber-600">Unmatched inquiries · {{ unmatched|length }}</div>
-      {% for inquiry in unmatched %}
-      <div class="text-slate-600">
-        {% if inquiry.communication_event.email_content %}{{ inquiry.communication_event.email_content.sender_name|default:inquiry.communication_event.email_content.sender_email_raw }}{% else %}<span class="font-mono text-xs">{{ inquiry.communication_event.external_source_id }}</span>{% endif %}
-        — {{ inquiry.summary|truncatechars:90 }}
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
   </div>
+
+  </div><!-- /left column -->
+  <div class="grid gap-4">
+
+  {% if unmatched %}
+  <div class="card border-amber-200">
+    <div class="card-title text-amber-600">Unmatched inquiries · {{ unmatched|length }}</div>
+    {% for inquiry in unmatched %}
+    <a href="{% url 'inquiry_review' inquiry.pk %}" class="block rounded px-1 py-1 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-brand-600">
+      {% if inquiry.communication_event.email_content %}{{ inquiry.communication_event.email_content.sender_name|default:inquiry.communication_event.email_content.sender_email_raw }}{% else %}<span class="font-mono text-xs">{{ inquiry.communication_event.external_source_id }}</span>{% endif %}
+      — {{ inquiry.summary|truncatechars:90 }}
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <div class="card">
     <div class="card-title">Communication timeline</div>
     {% for inquiry in timeline %}
-    <div class="grid grid-cols-[130px_24px_1fr] gap-2 border-b border-slate-100 py-2 last:border-0">
+    <a href="{% url 'inquiry_review' inquiry.pk %}" class="grid grid-cols-[130px_24px_1fr] gap-2 border-b border-slate-100 py-2 last:border-0 hover:bg-slate-50">
       <span class="font-mono text-xs text-slate-400">
         {% if inquiry.communication_event.occurred_at %}{{ inquiry.communication_event.occurred_at|date:"M j · H:i" }}{% else %}{{ inquiry.communication_event.received_at|date:"M j · H:i" }} <span title="Ingestion time">· ingested</span>{% endif %}
       </span>
       <span class="inline-flex h-5 w-5 items-center justify-center rounded border border-slate-200 bg-slate-100 text-[10px] font-bold text-slate-500">{% if inquiry.communication_event.channel == "email" %}✉{% else %}☎{% endif %}</span>
       <span>
         <b>{{ inquiry.carrier.company_name|default:"Unresolved carrier" }}</b>
+        {% if inquiry.review_status == "needs_review" %}<span class="chip chip-warn ml-1">needs review</span>{% endif %}
         <span class="block text-xs text-slate-500">{{ inquiry.summary|truncatechars:120 }}</span>
       </span>
-    </div>
+    </a>
     {% empty %}
     <p class="text-slate-400">No communications reference this load yet.</p>
     {% endfor %}
   </div>
+
+  </div><!-- /right column -->
+  </div><!-- /two-column grid -->
 
 </div>
 {% endblock %}

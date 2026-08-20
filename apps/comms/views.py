@@ -1,7 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.core.files.storage import default_storage
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 
-from apps.comms.models import CommunicationEvent, IngestionJob
+from apps.comms.models import CallRecording, CommunicationEvent, IngestionJob
 from apps.freight.models import DatasetSnapshot
 
 ATTENTION_STATUSES = {IngestionJob.Status.NEEDS_REVIEW, IngestionJob.Status.FAILED}
@@ -29,9 +32,22 @@ STATE_CHIPS = {
 }
 
 
+def _select_inquiry(job, inquiries):
+    """Deterministic review destination (spec 3A): the lowest sequence needing
+    review for a needs_review job, otherwise the lowest sequence overall."""
+    if not inquiries:
+        return None
+    if job and job.status == IngestionJob.Status.NEEDS_REVIEW:
+        for inquiry in inquiries:
+            if inquiry.review_status == "needs_review":
+                return inquiry
+    return inquiries[0]
+
+
 def _row(event):
     job = getattr(event, "ingestion_job", None)
-    inquiry = event.inquiries.order_by("sequence_number").first()
+    inquiries = sorted(event.inquiries.all(), key=lambda inquiry: inquiry.sequence_number)
+    inquiry = _select_inquiry(job, inquiries)
     email = getattr(event, "email_content", None) if event.channel == "email" else None
     state_label, state_class = STATE_CHIPS.get(job.status if job else "queued", ("", ""))
     return {
@@ -39,6 +55,7 @@ def _row(event):
         "email": email,
         "job": job,
         "inquiry": inquiry,
+        "url": reverse("inquiry_review", args=[inquiry.pk]) if inquiry else None,
         "intent_label": INTENT_LABELS.get(inquiry.primary_intent) if inquiry else None,
         "state_label": state_label,
         "state_class": state_class,
@@ -95,3 +112,14 @@ def inbox(request):
             "state_options": STATE_CHIPS,
         },
     )
+
+
+@login_required
+def call_audio(request, pk):
+    """Authenticated streaming of raw call evidence for review playback."""
+    recording = get_object_or_404(CallRecording, pk=pk)
+    try:
+        stream = default_storage.open(recording.storage_key, "rb")
+    except FileNotFoundError:
+        raise Http404 from None
+    return FileResponse(stream, content_type=recording.mime_type or "audio/wav")

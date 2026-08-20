@@ -22,7 +22,7 @@ def shell(request):
         "now": django_timezone.now(),
         "nav_items": [
             ("Dashboard", reverse("dashboard")),
-            ("Unified Inbox", reverse("inbox")),
+            ("Inbox", reverse("inbox")),
             ("Loads", reverse("loads")),
         ],
     }
