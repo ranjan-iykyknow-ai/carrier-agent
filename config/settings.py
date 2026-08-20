@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "apps.freight",
     "apps.comms",
     "apps.aiops",
+    "apps.inquiries",
 ]
 
 MIDDLEWARE = [

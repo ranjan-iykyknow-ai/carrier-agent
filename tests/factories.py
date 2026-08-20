@@ -26,6 +26,7 @@ from apps.freight.models import (
     Load,
     MarketRateHistory,
 )
+from apps.inquiries.models import EvidenceSpan, ExtractionRun, Inquiry
 
 
 def _checksum(seed: str) -> str:
@@ -174,6 +175,50 @@ def make_transcript(recording=None, job=None, **kwargs) -> Transcript:
     }
     defaults.update(kwargs)
     return Transcript.objects.create(**defaults)
+
+
+def make_extraction_run(event=None, job=None, **kwargs) -> ExtractionRun:
+    event = event or make_communication_event()
+    job = (
+        job
+        or IngestionJob.objects.filter(communication_event=event).first()
+        or make_ingestion_job(event=event)
+    )
+    defaults = {
+        "communication_event": event,
+        "ingestion_job": job,
+        "retry_generation": 0,
+        "schema_version": "extraction-v1",
+        "prompt_name": "extraction-email",
+        "prompt_version": "v1",
+        "model": "gpt-5.6-luna",
+        "is_current": False,
+    }
+    defaults.update(kwargs)
+    return ExtractionRun.objects.create(**defaults)
+
+
+def make_inquiry(event=None, **kwargs) -> Inquiry:
+    event = event or make_communication_event()
+    defaults = {
+        "communication_event": event,
+        "sequence_number": 1,
+        "primary_intent": Inquiry.Intent.AVAILABILITY,
+    }
+    defaults.update(kwargs)
+    return Inquiry.objects.create(**defaults)
+
+
+def make_evidence_span(event=None, **kwargs) -> EvidenceSpan:
+    event = event or make_communication_event()
+    defaults = {
+        "communication_event": event,
+        "source_part": EvidenceSpan.SourcePart.BODY,
+        "stable_evidence_id": f"email:{event.external_source_id or event.id}#body:0-43",
+        "excerpt": "Can do. What's the all-in?",
+    }
+    defaults.update(kwargs)
+    return EvidenceSpan.objects.create(**defaults)
 
 
 def make_ai_operation(**kwargs) -> AIOperation:
