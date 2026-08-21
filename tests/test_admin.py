@@ -10,7 +10,10 @@ from tests.factories import (
     make_ai_operation,
     make_call_recording,
     make_candidate,
+    make_candidate_inquiry,
+    make_carrier,
     make_communication_event,
+    make_compliance_assessment,
     make_eligibility_assessment,
     make_email_content,
     make_evaluation_case,
@@ -18,6 +21,7 @@ from tests.factories import (
     make_extraction_run,
     make_ingestion_job,
     make_inquiry,
+    make_lane,
     make_load,
     make_market_rate,
     make_provider_call,
@@ -29,6 +33,22 @@ from tests.factories import (
 pytestmark = pytest.mark.django_db
 
 PROJECT_APPS = ("freight", "comms", "aiops", "inquiries", "candidates", "workspace")
+
+# Admin pages that stringify a carrier, directly or through a candidate. These
+# are what a carrier with no company_name breaks.
+CARRIER_RENDERING_MODELS = frozenset(
+    {
+        "Carrier",
+        "CarrierContact",
+        "CarrierEquipment",
+        "CarrierPreferredLane",
+        "InquiryCarrierMatch",
+        "CarrierLoadCandidate",
+        "CandidateInquiry",
+        "ComplianceAssessment",
+        "EligibilityAssessment",
+    }
+)
 
 
 def project_models():
@@ -64,7 +84,34 @@ def world():
     make_provider_call(operation=operation)
     make_evaluation_case(run=make_evaluation_run())
     make_market_rate(snapshot=snapshot)
+    _wire_unnamed_carrier(snapshot, load, inquiry)
     return snapshot
+
+
+def _wire_unnamed_carrier(snapshot, load, inquiry):
+    """The dataset ships carriers with no company_name (3 rows). Every admin page
+    that renders one must survive it, so the fixture carries one through each
+    model that points at a carrier."""
+    from apps.freight.models import CarrierContact, CarrierEquipment, CarrierPreferredLane
+    from apps.inquiries.models import InquiryCarrierMatch, MatchTier
+
+    carrier = make_carrier(snapshot=snapshot, company_name=None, source_identifier="mc:1592228")
+    CarrierContact.objects.create(
+        carrier=carrier, name="Dispatch", email_raw="dispatch@example.com", is_primary=True
+    )
+    CarrierEquipment.objects.create(carrier=carrier, equipment_type=load.equipment_type)
+    CarrierPreferredLane.objects.create(carrier=carrier, lane=make_lane("PA", "NJ"))
+    InquiryCarrierMatch.objects.create(
+        inquiry=inquiry,
+        carrier=carrier,
+        match_tier=MatchTier.EXACT,
+        primary_method=InquiryCarrierMatch.PrimaryMethod.MC_NUMBER,
+    )
+    candidate = make_candidate(carrier=carrier, load=load)
+    make_candidate_inquiry(candidate=candidate, inquiry=inquiry)
+    make_compliance_assessment(candidate=candidate)
+    make_eligibility_assessment(candidate=candidate)
+    return carrier
 
 
 class TestCoverage:
@@ -79,6 +126,17 @@ class TestCoverage:
             url = reverse(f"admin:{model._meta.app_label}_{model._meta.model_name}_changelist")
             response = admin_client.get(url)
             assert response.status_code == 200, model.__name__
+
+    def test_carrier_rendering_changelists_have_rows_to_render(self, world):
+        """An empty changelist renders 200 no matter how broken its rows are, so
+        the sweep above only covers a carrier that has no company_name once the
+        fixture actually puts one in each of these tables."""
+        empty = [
+            model.__name__
+            for model in project_models()
+            if model.__name__ in CARRIER_RENDERING_MODELS and not model.objects.exists()
+        ]
+        assert empty == []
 
     def test_detail_pages_render_for_populated_models(self, admin_client, world):
         for model in project_models():

@@ -266,7 +266,10 @@ class Carrier(TimeStampedModel):
         ]
 
     def __str__(self):
-        return self.company_name
+        # company_name is NULL for dataset rows whose carrier was never named,
+        # and __str__ must still return a string or every admin page and f-string
+        # that renders a carrier raises TypeError.
+        return self.company_name or f"(unnamed carrier) {self.source_identifier}"
 
 
 class CarrierContact(TimeStampedModel):
