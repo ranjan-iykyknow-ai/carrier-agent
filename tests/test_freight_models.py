@@ -125,6 +125,16 @@ class TestCarrier:
             )
         )
 
+    # The dataset ships 3 carriers with no company_name; __str__ must still be a
+    # string or every admin page that renders a carrier raises TypeError.
+    def test_unnamed_carrier_str_falls_back_to_source_identifier(self):
+        carrier = make_carrier(company_name=None, source_identifier="mc:1592228")
+        assert str(carrier) == "(unnamed carrier) mc:1592228"
+
+    def test_named_carrier_str_is_the_company_name(self):
+        carrier = make_carrier(company_name="Atlantic Carriers Inc")
+        assert str(carrier) == "Atlantic Carriers Inc"
+
 
 class TestCarrierRelations:
     def test_carrier_equipment_pair_unique(self):
